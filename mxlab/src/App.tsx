@@ -12,7 +12,6 @@ const App: React.FC = () => {
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/intervention-create' element={<InterventionCreate/>}/>
       <Route path='/intervention-view' element={<InterventionView/>}/>
-      {/* Add more routes as needed */}
     </Routes>
   );
 };

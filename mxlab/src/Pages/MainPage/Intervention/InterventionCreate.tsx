@@ -107,7 +107,7 @@ const InterventionCreate: React.FC = () => {
                       type="text"
                       {...register('title', { required: 'Le titre est requis' })}
                       placeholder="Saisissez le titre"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent"
                     />
                     {errors.title && (
                       <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -122,7 +122,7 @@ const InterventionCreate: React.FC = () => {
                     <div className="relative">
                       <select
                         {...register('type', { required: 'Le type est requis' })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent appearance-none bg-white"
                       >
                         <option value="">Préventive, corrective etc...</option>
                         {interventionTypes.map((type) => (
@@ -146,7 +146,7 @@ const InterventionCreate: React.FC = () => {
                     {...register('description', { required: 'La description est requise' })}
                     placeholder="Fournir une description détaillée"
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent resize-none"
                   />
                   {errors.description && (
                     <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -161,7 +161,7 @@ const InterventionCreate: React.FC = () => {
                   <div className="relative w-48">
                     <select
                       {...register('priority', { required: 'La priorité est requise' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Urgent</option>
                       {priorities.map((priority) => (
@@ -191,7 +191,7 @@ const InterventionCreate: React.FC = () => {
                     <div className="relative">
                       <select
                         {...register('equipment', { required: 'L\'équipement est requis' })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md  focus:border-transparent appearance-none bg-white"
                       >
                         <option value="">Sélectionner l'équipement</option>
                         {equipments.map((equipment) => (
@@ -214,7 +214,7 @@ const InterventionCreate: React.FC = () => {
                       type="text"
                       {...register('location', { required: 'La location est requise' })}
                       placeholder="Entrer la location ou site"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent"
                     />
                     {errors.location && (
                       <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
@@ -238,7 +238,7 @@ const InterventionCreate: React.FC = () => {
                   <div className="relative">
                     <select
                       {...register('technician', { required: 'Le technicien est requis' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Fahmi</option>
                       {technicians.map((tech) => (
