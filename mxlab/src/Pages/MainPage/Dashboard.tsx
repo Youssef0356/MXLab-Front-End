@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Layout from '../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
