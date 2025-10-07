@@ -6,7 +6,7 @@ type TopbarProps = {
 const Topbar:React.FC<TopbarProps> = ({username}) => {
     return (
         <header className='w-full h-16 bg-white shadow-md flex items-center justify-between px-6 sticky top-0 z-50'>
-            <div className='flex items-center w-1/4 bg-gray-100 rounded px-3 py-2'>
+            <div className='flex items-center w-1/4 bg-white rounded border-1 border-gray-200 px-3 py-2'>
             <Search className='w-5 h-5 text-gray-500 mr-2 ' />
             <input type='text' placeholder='Rechercher les demandes , les interventions ...' className='bg-transparent outline-none text-sm 
             w-full text-gray-700 placeholder-gray-400 ' />

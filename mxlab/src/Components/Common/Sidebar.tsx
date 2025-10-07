@@ -44,22 +44,41 @@ const Sidebar:React.FC = () => {
     {
       id: 'users',
       label: 'Utilisateurs',
-      icon: Users
+      icon: Users,
+      subItems: [
+        { id: 'UserView', label: "Créer order d'intervention" },
+        { id: 'UserCreate', label: "Liste des ordres d'interventions" },
+      ]
     },
     {
       id: 'surveillance',
       label: 'Surveillance des sites',
-      icon: Map
+      icon: Map,
+      subItems: [
+        { id: 'SiteView', label: "Liste des sites" },
+        { id: 'SiteCreate', label: "Ajouter nouveau site" },
+        { id: 'SiteCart', label: "Carte Globale (geolocalisation des sites) " }
+      ]
     },
     {
       id: 'equipment',
       label: 'Équipement',
-      icon: Package
+      icon: Package,
+      subItems: [
+        { id: 'EquipementsView', label: "Liste des equipements" },
+        { id: 'EquipementsCreate', label: "Ajouter nouveau equipement" },
+        { id: 'EquipementsIOT', label: "IOT" }
+      ]
     },
     {
       id: 'maintenance',
       label: 'Maintenance',
-      icon: Wrench
+      icon: Wrench,
+      subItems: [
+        { id: 'MaintainanceView', label: "Preventive" },
+        { id: 'MaintainanceType', label: "Historique maintenance" },
+        { id: 'Calendar', label: "Calendrier" }
+      ]
     },
     {
       id: 'settings',
