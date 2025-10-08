@@ -69,9 +69,39 @@ const Sidebar:React.FC = () => {
 
   // Update active item based on current route
   useEffect(() => {
+    console.log('Route changed to:', location.pathname);
     const currentItemId = getItemIdForRoute(location.pathname);
+    console.log('Setting active item from route to:', currentItemId);
     setActiveItem(currentItemId);
     localStorage.setItem('sidebar-active-item', currentItemId);
+    
+    // Keep parent menu expanded if the new active item is a sub-item
+    const subItemToParentMap: Record<string, string> = {
+      'visualisations': 'Dashboard',
+      'InterventionRequests': 'orders',
+      'InterventionCreate': 'orders',
+      'InterventionList': 'orders',
+      'UserView': 'users',
+      'UserCreate': 'users',
+      'SiteView': 'surveillance',
+      'SiteCreate': 'surveillance',
+      'SiteCart': 'surveillance',
+      'EquipementsView': 'equipment',
+      'EquipementsCreate': 'equipment',
+      'EquipementsIOT': 'equipment',
+      'MaintainanceView': 'maintenance',
+      'MaintainanceType': 'maintenance',
+      'Calendar': 'maintenance'
+    };
+    
+    const parentMenuId = subItemToParentMap[currentItemId];
+    if (parentMenuId) {
+      console.log('Keeping parent menu open:', parentMenuId);
+      setExpandedItems(prev => ({
+        ...prev,
+        [parentMenuId]: true
+      }));
+    }
   }, [location.pathname]);
 
   // Map menu item IDs to routes
@@ -103,8 +133,8 @@ const Sidebar:React.FC = () => {
       const isCurrentlyExpanded = expandedItems[itemId];
       
       if (!isCurrentlyExpanded) {
-        // First click: Expand menu and navigate to first sub-item
-        setExpandedItems(prev => ({ ...prev, [itemId]: true }));
+        // First click: Close other menus, expand this menu and navigate to first sub-item
+        setExpandedItems({ [itemId]: true }); // Close all others, open only this one
         
         const firstSubItem = subItems[0];
         setActiveItem(firstSubItem.id);
@@ -118,6 +148,8 @@ const Sidebar:React.FC = () => {
       }
     } else {
       // Navigate to the route if it's a leaf item (like Settings)
+      // Close all expanded menus when clicking a leaf item
+      setExpandedItems({});
       setActiveItem(itemId);
       localStorage.setItem('sidebar-active-item', itemId);
       const route = getRouteForItem(itemId);
@@ -125,7 +157,49 @@ const Sidebar:React.FC = () => {
     }
   };
 
-  const handleSubItemClick = (subItemId: string) => {
+  const handleSubItemClick = (subItemId: string, event?: React.MouseEvent) => {
+    // Prevent event bubbling to parent elements
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    console.log('Sub-item clicked:', subItemId);
+    console.log('Current expanded items before:', expandedItems);
+    
+    // Map sub-items to their parent menus
+    const subItemToParentMap: Record<string, string> = {
+      'visualisations': 'Dashboard',
+      'InterventionRequests': 'orders',
+      'InterventionCreate': 'orders',
+      'InterventionList': 'orders',
+      'UserView': 'users',
+      'UserCreate': 'users',
+      'SiteView': 'surveillance',
+      'SiteCreate': 'surveillance',
+      'SiteCart': 'surveillance',
+      'EquipementsView': 'equipment',
+      'EquipementsCreate': 'equipment',
+      'EquipementsIOT': 'equipment',
+      'MaintainanceView': 'maintenance',
+      'MaintainanceType': 'maintenance',
+      'Calendar': 'maintenance'
+    };
+    
+    // Ensure the parent menu stays open when clicking sub-items
+    const parentMenuId = subItemToParentMap[subItemId];
+    console.log('Parent menu ID:', parentMenuId);
+    
+    if (parentMenuId) {
+      setExpandedItems(prev => {
+        const newState = {
+          ...prev,
+          [parentMenuId]: true  // Keep parent menu open
+        };
+        console.log('Setting expanded items to:', newState);
+        return newState;
+      });
+    }
+    
     setActiveItem(subItemId);
     localStorage.setItem('sidebar-active-item', subItemId);
     const route = getRouteForItem(subItemId);
@@ -255,7 +329,7 @@ const Sidebar:React.FC = () => {
                     {item.subItems.map((subItem) => (
                       <li key={subItem.id} className="list-none">
                         <button
-                          onClick={() => handleSubItemClick(subItem.id)}
+                          onClick={(e) => handleSubItemClick(subItem.id, e)}
                           className={`w-full text-left px-3 py-2.5 rounded-md text-sm transition-all duration-300 ${activeItem === subItem.id
                               ? 'text-black bg-transparent'
                               : 'text-slate-600 hover:bg-gradient-to-r hover:from-gray-200 hover:to-gray-300 hover:text-gray-700 hover:shadow-md hover:shadow-gray-200 '
