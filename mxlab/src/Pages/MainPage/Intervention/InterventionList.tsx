@@ -190,12 +190,7 @@ const InterventionList: React.FC = () => {
                             />
                         </div>
 
-                        <div className="flex gap-1">
-                            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                <Eye className="w-4 h-4" />
-                                Voir
-                            </button>
-                        </div>
+
                         
                         <div className="flex flex-wrap gap-3">
                             {(['Toutes les demandes', 'En attente', 'Approuvées', 'Rejetées'] as FilterStatus[]).map((filter) => (
@@ -220,9 +215,7 @@ const InterventionList: React.FC = () => {
                         <div className="min-w-max">
                             {/* Table Header */}
                             <div className="flex bg-gray-50 border-b border-gray-200 font-medium text-gray-700">
-                                <div className="relative flex-shrink-0 p-4 flex items-center justify-center" style={{ width: `${columnWidths.checkbox}px` }}>
-                                    <span className="text-center">-</span>
-                                </div>
+
                                 <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.id}px` }}>
                                     Id
                                     <ResizeHandle columnKey="id" />
@@ -268,15 +261,7 @@ const InterventionList: React.FC = () => {
                             <div className="divide-y divide-gray-200">
                                 {filteredInterventions.map((intervention) => (
                                     <div key={intervention.id} className="flex hover:bg-gray-50 transition-colors">
-                                        {/* Checkbox */}
-                                        <div className="flex-shrink-0 p-4 flex items-center justify-center" style={{ width: `${columnWidths.checkbox}px` }}>
-                                            <input
-                                                type="checkbox"
-                                                className="rounded border-gray-300 w-8 h-8"
-                                                checked={selectedInterventionId === intervention.id}
-                                                onChange={() => handleCheckboxChange(intervention.id)}
-                                            />
-                                        </div>
+
 
                                         {/* ID */}
                                         <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.id}px` }}>
