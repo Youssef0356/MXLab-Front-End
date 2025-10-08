@@ -10,7 +10,6 @@ type FilterStatus = 'Toutes les demandes' | 'En attente' | 'Approuvées' | 'Reje
 const InterventionList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('Toutes les demandes');
-    const [selectedInterventionId, setSelectedInterventionId] = useState<string | null>(null);
     
     // Column width state for resizable columns
     const [columnWidths, setColumnWidths] = useState({
@@ -77,17 +76,6 @@ const InterventionList: React.FC = () => {
             return `${baseClasses} bg-blue-600 text-white`;
         }
         return `${baseClasses} bg-gray-100 text-gray-700 hover:bg-gray-200`;
-    };
-
-    // Handle checkbox selection (single selection only)
-    const handleCheckboxChange = (interventionId: string) => {
-        if (selectedInterventionId === interventionId) {
-            // If clicking on already selected checkbox, unselect it
-            setSelectedInterventionId(null);
-        } else {
-            // Select the new intervention (automatically unselects previous)
-            setSelectedInterventionId(interventionId);
-        }
     };
 
     // TODO: Implement these functions when connecting to backend

@@ -23,17 +23,7 @@ const Sidebar:React.FC = () => {
   
   const [expandedItems, setExpandedItems] = useState<Record<string,boolean>>({});
 
-  const toggleExpanded = (itemId : string) => {
-    setExpandedItems(prev => {
-      const newState = {
-        ...prev,
-        [itemId]: !prev[itemId]
-      };
-      // Persist expanded state to localStorage
-      localStorage.setItem('sidebar-expanded-items', JSON.stringify(newState));
-      return newState;
-    });
-  };
+
 
   // Map routes back to menu item IDs
   const getItemIdForRoute = (pathname: string): string => {
@@ -44,6 +34,7 @@ const Sidebar:React.FC = () => {
       '/interventionList': 'InterventionList',
       '/user-view': 'UserView',
       '/user-create': 'UserCreate',
+      '/user-list': 'UserList',
       '/site-view': 'SiteView',
       '/site-create': 'SiteCreate',
       '/site-cart': 'SiteCart',
@@ -69,9 +60,11 @@ const Sidebar:React.FC = () => {
 
   // Update active item based on current route
   useEffect(() => {
-    console.log('Route changed to:', location.pathname);
+    console.log('🔄 Route changed to:', location.pathname);
+    console.log('📋 Current expanded items before route change:', expandedItems);
+    
     const currentItemId = getItemIdForRoute(location.pathname);
-    console.log('Setting active item from route to:', currentItemId);
+    console.log('🎯 Setting active item from route to:', currentItemId);
     setActiveItem(currentItemId);
     localStorage.setItem('sidebar-active-item', currentItemId);
     
@@ -83,6 +76,7 @@ const Sidebar:React.FC = () => {
       'InterventionList': 'orders',
       'UserView': 'users',
       'UserCreate': 'users',
+      'UserList': 'users',
       'SiteView': 'surveillance',
       'SiteCreate': 'surveillance',
       'SiteCart': 'surveillance',
@@ -96,11 +90,17 @@ const Sidebar:React.FC = () => {
     
     const parentMenuId = subItemToParentMap[currentItemId];
     if (parentMenuId) {
-      console.log('Keeping parent menu open:', parentMenuId);
-      setExpandedItems(prev => ({
-        ...prev,
-        [parentMenuId]: true
-      }));
+      console.log('🔓 Keeping parent menu open:', parentMenuId);
+      setExpandedItems(prev => {
+        const newState = {
+          ...prev,
+          [parentMenuId]: true
+        };
+        console.log('📋 New expanded items after route change:', newState);
+        return newState;
+      });
+    } else {
+      console.log('❌ No parent menu found for:', currentItemId);
     }
   }, [location.pathname]);
 
@@ -114,6 +114,7 @@ const Sidebar:React.FC = () => {
       'InterventionList': '/interventionList',
       'UserView': '/user-view',
       'UserCreate': '/user-create',
+      'UserList': '/user-list',
       'SiteView': '/site-view',
       'SiteCreate': '/site-create',
       'SiteCart': '/site-cart',
@@ -163,8 +164,8 @@ const Sidebar:React.FC = () => {
       event.stopPropagation();
     }
     
-    console.log('Sub-item clicked:', subItemId);
-    console.log('Current expanded items before:', expandedItems);
+    console.log('🖱️ Sub-item clicked:', subItemId);
+    console.log('📋 Current expanded items before sub-item click:', expandedItems);
     
     // Map sub-items to their parent menus
     const subItemToParentMap: Record<string, string> = {
@@ -174,6 +175,7 @@ const Sidebar:React.FC = () => {
       'InterventionList': 'orders',
       'UserView': 'users',
       'UserCreate': 'users',
+      'UserList': 'users',
       'SiteView': 'surveillance',
       'SiteCreate': 'surveillance',
       'SiteCart': 'surveillance',
@@ -238,8 +240,9 @@ const Sidebar:React.FC = () => {
       label: 'Utilisateurs',
       icon: Users,
       subItems: [
-        { id: 'UserView', label: "Créer order d'intervention" },
-        { id: 'UserCreate', label: "Liste des ordres d'interventions" },
+        { id: 'UserView', label: "Voir les utilisateurs" },
+        { id: 'UserCreate', label: "Créer un utilisateur" },
+        { id: 'UserList', label: "Liste des utilisateurs" },
       ]
     },
     {

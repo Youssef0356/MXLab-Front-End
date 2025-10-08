@@ -6,6 +6,10 @@ import InterventionRequests from './Pages/MainPage/Intervention/InterventionRequ
 import InterventionList from './Pages/MainPage/Intervention/InterventionList';
 import InterventionApproval from './Pages/MainPage/Intervention/InterventionApproval.tsx';
 import InterventionDetails from './Pages/MainPage/Intervention/InterventionDetails';
+import UserView from './Pages/MainPage/Utilisateur/UserView';
+import UserCreate from './Pages/MainPage/Utilisateur/UserCreate';
+import UserList from './Pages/MainPage/Utilisateur/UserList';
+
 import { Routes, Route } from 'react-router-dom';
 
 const App: React.FC = () => {
@@ -18,6 +22,9 @@ const App: React.FC = () => {
       <Route path='/interventionList' element={<InterventionList/>}/>
       <Route path='/interventionApproval/:id' element={<InterventionApproval/>}/>
       <Route path='/interventionDetails/:id' element={<InterventionDetails/>}/>
+      <Route path='/user-view' element={<UserView/>}/>
+      <Route path='/user-create' element={<UserCreate/>}/>
+      <Route path='/user-list' element={<UserList/>}/>
 
     </Routes>
   );
