@@ -1,0 +1,13 @@
+[
+  {
+    "id": "EMP-0214",
+    "name": "Fatma",
+    "email": "fatma1@gmail.com",
+    "password": "fatma123",
+    "phone": "+216 98524576",
+    "dateCreation": "2024/01/15",
+    "privilege": "Superviseur",
+    "location": "Site de Production Site A",
+    "isActive": true
+  }
+]

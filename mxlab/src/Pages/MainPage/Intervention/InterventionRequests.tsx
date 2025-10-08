@@ -1,26 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../../../Components/Common/Layout';
-import { Search, Eye, RotateCcw, Clock, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Layout from '../../../Components/Common/Layout';
+import { Search, Eye, RotateCcw, Printer, Clock } from 'lucide-react';
 import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
+import usersData from '../../../api/json-simulations/users.json';
 // Types for intervention data
 type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
 
-type Employee = {
-  name: string;
+type User = {
   id: string;
+  name: string;
   email: string;
+  password: string;
   phone: string;
+  dateCreation: string;
+  privilege: string;
+  location: string;
+  isActive: boolean;
 };
 
 type InterventionRequest = {
   id: string;
   title: string;
   description: string;
-  employee: Employee;
+  userId: string;
+  Equipement: string;
+  location: string;
+  employee: {
+    name: string;
+    id: string;
+    email: string;
+    phone: string;
+  };
   status: InterventionStatus;
+  priority: string;
   submittedDate: string;
-  priority?: 'Haute' | 'Moyenne' | 'Basse';
+  mediaFiles: Array<{
+    name: string;
+    size: string;
+    type: string;
+    uploadedAt: string;
+  }>;
 };
 
 // Filter types
@@ -38,8 +58,26 @@ const InterventionRequests: React.FC = () => {
   const [interventions, setInterventions] = useState<InterventionRequest[]>([]);
 
   useEffect(() => {
-    // Load data from JSON simulation
-    setInterventions(interventionRequestsData as InterventionRequest[]);
+    // Load intervention requests and merge with user data
+    const interventionsWithUserData = interventionRequestsData.map((request: any) => {
+      const user = usersData.find((u: any) => u.id === request.userId);
+      return {
+        ...request,
+        employee: user ? {
+          name: user.name,
+          id: user.id,
+          email: user.email,
+          phone: user.phone
+        } : {
+          name: 'Unknown User',
+          id: request.userId,
+          email: '',
+          phone: ''
+        }
+      };
+    });
+    
+    setInterventions(interventionsWithUserData as InterventionRequest[]);
   }, []);
 
   const filteredInterventions = interventions.filter(intervention => {

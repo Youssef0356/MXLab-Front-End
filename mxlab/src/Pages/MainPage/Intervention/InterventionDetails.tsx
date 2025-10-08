@@ -3,37 +3,47 @@ import Layout from '../../../Components/Common/Layout';
 import { ArrowLeft, Printer, CheckCircle, XCircle, FileText, Video, Image } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
+import usersData from '../../../api/json-simulations/users.json';
 
 // Types for intervention data
 type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
 
-type Employee = {
-  name: string;
+type User = {
   id: string;
+  name: string;
   email: string;
+  password: string;
   phone: string;
+  dateCreation: string;
+  privilege: string;
+  location: string;
+  isActive: boolean;
 };
 
-type Attachment = {
+type MediaFile = {
   name: string;
   size: string;
-  type: 'video' | 'pdf' | 'image';
+  type: 'video' | 'image';
+  uploadedAt: string;
 };
 
 type InterventionRequest = {
   id: string;
   title: string;
   description: string;
-  employee: Employee;
-  status: InterventionStatus;
-  priority: 'Haute' | 'Moyenne' | 'Basse';
-  submittedDate: string;
-  submittedTime: string;
+  userId: string;
+  Equipement: string;
   location: string;
-  equipment: string;
-  attachments: Attachment[];
-  category: string;
-  urgency: string;
+  employee: {
+    name: string;
+    id: string;
+    email: string;
+    phone: string;
+  };
+  status: InterventionStatus;
+  priority: string;
+  submittedDate: string;
+  mediaFiles: MediaFile[];
 };
 
 const InterventionDetails: React.FC = () => {
@@ -44,7 +54,27 @@ const InterventionDetails: React.FC = () => {
   useEffect(() => {
     // Simulate API call to fetch intervention details
     const found = interventionRequestsData.find(item => item.id === id);
-    setIntervention(found as InterventionRequest || null);
+    if (found) {
+      // Get user data
+      const user = usersData.find((u: any) => u.id === found.userId);
+      const interventionWithUserData = {
+        ...found,
+        employee: user ? {
+          name: user.name,
+          id: user.id,
+          email: user.email,
+          phone: user.phone
+        } : {
+          name: 'Unknown User',
+          id: found.userId,
+          email: '',
+          phone: ''
+        }
+      };
+      setIntervention(interventionWithUserData as InterventionRequest);
+    } else {
+      setIntervention(null);
+    }
   }, [id]);
 
   const getStatusBadge = (status: InterventionStatus) => {
@@ -175,11 +205,11 @@ const InterventionDetails: React.FC = () => {
             {/* Attachments */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Attachement ({intervention.attachments.length})
+                Attachement ({intervention.mediaFiles.length})
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {intervention.attachments.map((attachment, index) => (
+                {intervention.mediaFiles.map((attachment: MediaFile, index: number) => (
                   <div
                     key={index}
                     className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
@@ -232,7 +262,6 @@ const InterventionDetails: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-1">Soumis</p>
                   <p className="text-sm text-gray-600">{intervention.submittedDate}</p>
-                  <p className="text-sm text-gray-600">{intervention.submittedTime}</p>
                 </div>
               </div>
             </div>

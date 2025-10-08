@@ -3,6 +3,9 @@
     "id": "DEM558",
     "title": "Problème moteur du convoyeur",
     "description": "Le moteur du convoyeur de la ligne de production A émet un bruit de broyage inhabituel depuis deux jours. Le bruit se produit de manière intermittente, mais semble s'aggraver. Aucun défaut visuel n'a été observé, mais il y a des vibrations inquiétantes concernant une éventuelle panne pendant les heures de production de pointe.",
+    "userId": "EMP-0214",
+    "Equipement": "Convoyeur Principal - Ligne A",
+    "location": "Site de Production Site A - Ligne A - Zone 2",
     "employee": {
       "name": "Fatma",
       "id": "EMP-0214",
@@ -12,84 +15,21 @@
     "status": "En Attente",
     "priority": "Haute",
     "submittedDate": "01/12/2025",
-    "submittedTime": "08:30AM",
-    "location": "Site de Production Site A",
-    "equipment": "Convoyeur Principal - Ligne A",
-    "attachments": [
+    "mediaFiles": [
       {
-        "name": "Moteur du convoyeur.mp4",
+        "name": "Moteur_bruit.mp4",
         "size": "15.2MB",
-        "type": "video"
+        "type": "video",
+        "uploadedAt": "2025/12/01 08:25"
       },
       {
-        "name": "Moteur du convoyeur.pdf",
-        "size": "2MB",
-        "type": "pdf"
-      },
-      {
-        "name": "Moteurphoto.png",
+        "name": "Moteur_photo1.jpg",
         "size": "1.2MB",
-        "type": "image"
+        "type": "image",
+        "uploadedAt": "2025/12/01 08:26"
       }
-    ],
-    "category": "Maintenance Préventive",
-    "urgency": "Critique"
-  },
-  {
-    "id": "DEM559",
-    "title": "Courroie du convoyeur usée",
-    "description": "La courroie du convoyeur principal montre des signes d'usure avancée avec des fissures visibles sur les bords. Remplacement nécessaire avant la prochaine période de production intensive.",
-    "employee": {
-      "name": "Bachir",
-      "id": "EMP-0215",
-      "email": "bachir@gmail.com",
-      "phone": "+216 98524577"
-    },
-    "status": "Approuvé",
-    "priority": "Moyenne",
-    "submittedDate": "30/11/2025",
-    "submittedTime": "14:15PM",
-    "location": "Site de Production Site B",
-    "equipment": "Convoyeur Secondaire - Ligne B",
-    "attachments": [
-      {
-        "name": "Courroie_usee.jpg",
-        "size": "3.1MB",
-        "type": "image"
-      },
-      {
-        "name": "Rapport_inspection.pdf",
-        "size": "1.8MB",
-        "type": "pdf"
-      }
-    ],
-    "category": "Maintenance Corrective",
-    "urgency": "Modérée"
-  },
-  {
-    "id": "DEM560",
-    "title": "Fuite d'huile hydraulique",
-    "description": "Détection d'une fuite d'huile hydraulique au niveau du vérin principal. La fuite semble provenir du joint d'étanchéité et nécessite une intervention rapide.",
-    "employee": {
-      "name": "Ahmed",
-      "id": "EMP-0216",
-      "email": "ahmed@gmail.com",
-      "phone": "+216 98524578"
-    },
-    "status": "Rejeté",
-    "priority": "Basse",
-    "submittedDate": "29/11/2025",
-    "submittedTime": "09:45AM",
-    "location": "Site de Production Site C",
-    "equipment": "Système Hydraulique - Zone 3",
-    "attachments": [
-      {
-        "name": "Fuite_hydraulique.mp4",
-        "size": "8.7MB",
-        "type": "video"
-      }
-    ],
-    "category": "Maintenance d'Urgence",
-    "urgency": "Faible"
+    ]
   }
 ]
+    
+  
