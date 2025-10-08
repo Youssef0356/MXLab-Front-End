@@ -1,46 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../../Components/Common/Layout';
 import { Search, Eye, RotateCcw, Printer, Clock } from 'lucide-react';
 import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
 import usersData from '../../../api/json-simulations/users.json';
-// Types for intervention data
-type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  dateCreation: string;
-  privilege: string;
-  location: string;
-  isActive: boolean;
-};
-
-type InterventionRequest = {
-  id: string;
-  title: string;
-  description: string;
-  userId: string;
-  Equipement: string;
-  location: string;
+// Infer types from JSON data
+type BaseInterventionRequest = typeof interventionRequestsData[0];
+type InterventionRequest = BaseInterventionRequest & {
   employee: {
     name: string;
     id: string;
     email: string;
     phone: string;
   };
-  status: InterventionStatus;
-  priority: string;
-  submittedDate: string;
-  mediaFiles: Array<{
-    name: string;
-    size: string;
-    type: string;
-    uploadedAt: string;
-  }>;
 };
 
 // Filter types
@@ -55,12 +27,10 @@ const InterventionRequests: React.FC = () => {
   // TODO: Replace with actual API call to fetch interventions
   // const { data: interventions, isLoading, error } = useQuery('interventions', fetchInterventions);
 
-  const [interventions, setInterventions] = useState<InterventionRequest[]>([]);
-
-  useEffect(() => {
-    // Load intervention requests and merge with user data
-    const interventionsWithUserData = interventionRequestsData.map((request: any) => {
-      const user = usersData.find((u: any) => u.id === request.userId);
+  const [interventions] = useState(() => {
+    return interventionRequestsData.map((request) => {
+      // Find user by ID and check if they have employee privilege
+      const user = usersData.find((u) => u.id === request.userId && u.privilege === 'employee');
       return {
         ...request,
         employee: user ? {
@@ -69,16 +39,14 @@ const InterventionRequests: React.FC = () => {
           email: user.email,
           phone: user.phone
         } : {
-          name: 'Unknown User',
+          name: 'Unknown Employee',
           id: request.userId,
           email: '',
           phone: ''
         }
       };
     });
-    
-    setInterventions(interventionsWithUserData as InterventionRequest[]);
-  }, []);
+  });
 
   const filteredInterventions = interventions.filter(intervention => {
     const matchesSearch = intervention.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -94,7 +62,7 @@ const InterventionRequests: React.FC = () => {
   });
 
   // Status badge styling
-  const getStatusBadge = (status: InterventionStatus) => {
+  const getStatusBadge = (status: InterventionRequest['status']) => {
     const baseClasses = "px-3 py-1 rounded-full text-sm font-medium";
     switch (status) {
       case 'En Attente':
@@ -129,7 +97,7 @@ const InterventionRequests: React.FC = () => {
   };
 
   // TODO: Implement these functions when connecting to backend
-  const handleStatusChange = (interventionId: string, newStatus: InterventionStatus) => {
+  const handleStatusChange = (interventionId: string, newStatus: InterventionRequest['status']) => {
     // TODO: API call to update intervention status
     // updateInterventionStatus(interventionId, newStatus);
     console.log(`Updating intervention ${interventionId} to ${newStatus}`);
@@ -186,138 +154,138 @@ const InterventionRequests: React.FC = () => {
                 Voir
               </button>
             </div>
+            <div className="flex flex-wrap gap-2 ">
+              {(['Toutes les demandes', 'En attente', 'Approuvées', 'Rejetées'] as FilterStatus[]).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={getFilterButtonClass(filter)}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
 
-
-        </div>
-
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {(['Toutes les demandes', 'En attente', 'Approuvées', 'Rejetées'] as FilterStatus[]).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={getFilterButtonClass(filter)}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Interventions Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 font-medium text-gray-700">
-          <div className="col-span-1">
-            <h2 className='w-8 h-8 text-center'>-</h2>
           </div>
-          <div className="col-span-4">Détails de la demande</div>
-          <div className="col-span-2">Employé</div>
-          <div className="col-span-2">État</div>
-          <div className="col-span-2">Soumis</div>
-          <div className="col-span-1">Actions</div>
+
+          {/* Filter Tabs */}
+
         </div>
 
-        {/* Table Body */}
-        <div className="divide-y divide-gray-200">
-          {filteredInterventions.map((intervention) => (
-            <div key={intervention.id} className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors">
-              {/* Checkbox */}
-              <div className="col-span-1 ">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 w-8 h-8"
-                  checked={selectedInterventionId === intervention.id}
-                  onChange={() => handleCheckboxChange(intervention.id)}
-                />
-              </div>
+        {/* Interventions Table */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Table Header */}
+          <div className="grid grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 font-medium text-gray-700">
+            <div className="col-span-1">
+              <h2 className='w-8 h-8 text-center'>-</h2>
+            </div>
+            <div className="col-span-4">Détails de la demande</div>
+            <div className="col-span-2">Employé</div>
+            <div className="col-span-2">État</div>
+            <div className="col-span-2">Soumis</div>
+            <div className="col-span-1">Actions</div>
+          </div>
 
-              {/* Details */}
-              <div className="col-span-4">
-                <div className="flex items-start gap-3">
-                  {/* Priority Indicator */}
-                  <div className={`w-3 h-3 rounded-full mt-1 ${intervention.priority === 'Haute' ? 'bg-red-500' :
+          {/* Table Body */}
+          <div className="divide-y divide-gray-200">
+            {filteredInterventions.map((intervention) => (
+              <div key={intervention.id} className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors">
+                {/* Checkbox */}
+                <div className="col-span-1 ">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 w-8 h-8"
+                    checked={selectedInterventionId === intervention.id}
+                    onChange={() => handleCheckboxChange(intervention.id)}
+                  />
+                </div>
+
+                {/* Details */}
+                <div className="col-span-4">
+                  <div className="flex items-start gap-3">
+                    {/* Priority Indicator */}
+                    <div className={`w-3 h-3 rounded-full mt-1 ${intervention.priority === 'Haute' ? 'bg-red-500' :
                       intervention.priority === 'Moyenne' ? 'bg-yellow-500' : 'bg-green-500'
-                    }`} />
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-1">{intervention.title}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">{intervention.description}</p>
+                      }`} />
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-1">{intervention.title}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">{intervention.description}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Employee */}
-              <div className="col-span-2 flex items-center">
-                <span className="text-gray-900">{intervention.employee.name}</span>
-              </div>
+                {/* Employee */}
+                <div className="col-span-2 flex items-center">
+                  <span className="text-gray-900">{intervention.employee.name}</span>
+                </div>
 
-              {/* Status */}
-              <div className="col-span-2 flex items-center">
-                <span className={getStatusBadge(intervention.status)}>
-                  {intervention.status}
-                </span>
-              </div>
+                {/* Status */}
+                <div className="col-span-2 flex items-center">
+                  <span className={getStatusBadge(intervention.status)}>
+                    {intervention.status}
+                  </span>
+                </div>
 
-              {/* Submitted Date */}
-              <div className="col-span-2 flex items-center">
-                <span className="text-sm text-gray-600">{intervention.submittedDate}</span>
-              </div>
+                {/* Submitted Date */}
+                <div className="col-span-2 flex items-center">
+                  <span className="text-sm text-gray-600">{intervention.submittedDate}</span>
+                </div>
 
-              {/* Actions */}
-              <div className="col-span-1 flex items-center gap-2">
-                <button
-                  onClick={() => handleViewDetails(intervention.id)}
-                  className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
-                  title="Voir les détails"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleStatusChange(intervention.id, 'Approuvé')}
-                  className="p-1 text-gray-400 hover:text-green-600 transition-colors"
-                  title="Approuver"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handlePrint(intervention.id)}
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                  title="Imprimer"
-                >
-                  <Printer className="w-4 h-4" />
-                </button>
-                <button
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                  title="Plus d'options"
-                >
-                  <Clock className="w-4 h-4" />
-                </button>
+                {/* Actions */}
+                <div className="col-span-1 flex items-center gap-2">
+                  <button
+                    onClick={() => handleViewDetails(intervention.id)}
+                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                    title="Voir les détails"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(intervention.id, 'Approuvé')}
+                    className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                    title="Approuver"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handlePrint(intervention.id)}
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Imprimer"
+                  >
+                    <Printer className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Plus d'options"
+                  >
+                    <Clock className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Empty State */}
+          {filteredInterventions.length === 0 && (
+            <div className="p-8 text-center">
+              <div className="text-gray-400 mb-2">
+                <Search className="w-12 h-12 mx-auto" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">Aucune demande trouvée</h3>
+              <p className="text-gray-600">
+                {searchTerm ? 'Essayez de modifier votre recherche' : 'Aucune demande d\'intervention pour le moment'}
+              </p>
             </div>
-          ))}
+          )}
         </div>
 
-        {/* Empty State */}
-        {filteredInterventions.length === 0 && (
-          <div className="p-8 text-center">
-            <div className="text-gray-400 mb-2">
-              <Search className="w-12 h-12 mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">Aucune demande trouvée</h3>
-            <p className="text-gray-600">
-              {searchTerm ? 'Essayez de modifier votre recherche' : 'Aucune demande d\'intervention pour le moment'}
-            </p>
+        {/* Results Summary */}
+        {filteredInterventions.length > 0 && (
+          <div className="mt-4 text-sm text-gray-600">
+            Affichage de {filteredInterventions.length} demande(s) sur {interventions.length} au total
           </div>
         )}
       </div>
-
-      {/* Results Summary */}
-      {filteredInterventions.length > 0 && (
-        <div className="mt-4 text-sm text-gray-600">
-          Affichage de {filteredInterventions.length} demande(s) sur {interventions.length} au total
-        </div>
-      )}
-    </div>
     </Layout >
   );
 };

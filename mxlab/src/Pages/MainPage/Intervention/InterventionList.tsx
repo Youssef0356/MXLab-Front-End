@@ -1,31 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '../../../Components/Common/Layout';
 import { Search, Eye, RotateCcw, Printer } from 'lucide-react';
 import interventionListData from '../../../api/json-simulations/interventionList.json';
 
-// Types for intervention data
-type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
-type Priorite = 'Haute' | 'Moyenne' | 'Basse';
-type InterventionRequest = {
-    id: string;
-    requestId: string;
-    title: string;
-    description: string;
-    equipment: string;
-    site: string;
-    type: string;
-    priority: Priorite;
-    dateCreation: string;
-    technicien: string;
-    etat: InterventionStatus;
-    estimatedDuration: string;
-    assignedTeam: string;
-    tools: string[];
-    parts: string[];
-    cost: string;
-};
-
-// Filter types
+// Infer types from JSON data
+type InterventionRequest = typeof interventionListData[0];
 type FilterStatus = 'Toutes les demandes' | 'En attente' | 'Approuvées' | 'Rejetées';
 
 const InterventionList: React.FC = () => {
@@ -36,12 +15,8 @@ const InterventionList: React.FC = () => {
     // TODO: Replace with actual API call to fetch interventions
     // const { data: interventions, isLoading, error } = useQuery('interventions', fetchInterventions);
 
-    const [interventions, setInterventions] = useState<InterventionRequest[]>([]);
-
-    useEffect(() => {
-        // Load data from JSON simulation
-        setInterventions(interventionListData as InterventionRequest[]);
-    }, []);
+    // Load data from JSON simulation directly
+    const [interventions] = useState(interventionListData);
 
     const filteredInterventions = interventions.filter(intervention => {
         const matchesSearch = intervention.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,7 +36,7 @@ const InterventionList: React.FC = () => {
     });
 
     // Status badge styling
-    const getStatusBadge = (status: InterventionStatus) => {
+    const getStatusBadge = (status: InterventionRequest['etat']) => {
         const baseClasses = "px-3 py-1 rounded-full text-sm font-medium";
         switch (status) {
             case 'En Attente':
@@ -96,7 +71,7 @@ const InterventionList: React.FC = () => {
     };
 
     // TODO: Implement these functions when connecting to backend
-    const handleStatusChange = (interventionId: string, newStatus: InterventionStatus) => {
+    const handleStatusChange = (interventionId: string, newStatus: InterventionRequest['etat']) => {
         // TODO: API call to update intervention status
         // updateInterventionStatus(interventionId, newStatus);
         console.log(`Updating intervention ${interventionId} to ${newStatus}`);

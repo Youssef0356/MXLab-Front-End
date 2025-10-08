@@ -1,63 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '../../../Components/Common/Layout';
 import { ArrowLeft, Printer, CheckCircle, XCircle, FileText, Video, Image } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
 import usersData from '../../../api/json-simulations/users.json';
 
-// Types for intervention data
-type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  dateCreation: string;
-  privilege: string;
-  location: string;
-  isActive: boolean;
-};
-
-type MediaFile = {
-  name: string;
-  size: string;
-  type: 'video' | 'image';
-  uploadedAt: string;
-};
-
-type InterventionRequest = {
-  id: string;
-  title: string;
-  description: string;
-  userId: string;
-  Equipement: string;
-  location: string;
+// Infer types from JSON data
+type BaseInterventionRequest = typeof interventionRequestsData[0];
+type MediaFile = BaseInterventionRequest['mediaFiles'][0];
+type InterventionRequest = BaseInterventionRequest & {
   employee: {
     name: string;
     id: string;
     email: string;
     phone: string;
   };
-  status: InterventionStatus;
-  priority: string;
-  submittedDate: string;
-  mediaFiles: MediaFile[];
 };
 
 const InterventionDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [intervention, setIntervention] = useState<InterventionRequest | null>(null);
-
-  useEffect(() => {
-    // Simulate API call to fetch intervention details
+  // Find intervention and merge with user data directly
+  const [intervention] = useState(() => {
     const found = interventionRequestsData.find(item => item.id === id);
     if (found) {
-      // Get user data
-      const user = usersData.find((u: any) => u.id === found.userId);
-      const interventionWithUserData = {
+      // Find user by ID and check if they have employee privilege
+      const user = usersData.find((u) => u.id === found.userId && u.privilege === 'employee');
+      return {
         ...found,
         employee: user ? {
           name: user.name,
@@ -65,19 +34,17 @@ const InterventionDetails: React.FC = () => {
           email: user.email,
           phone: user.phone
         } : {
-          name: 'Unknown User',
+          name: 'Unknown Employee',
           id: found.userId,
           email: '',
           phone: ''
         }
       };
-      setIntervention(interventionWithUserData as InterventionRequest);
-    } else {
-      setIntervention(null);
     }
-  }, [id]);
+    return null;
+  });
 
-  const getStatusBadge = (status: InterventionStatus) => {
+  const getStatusBadge = (status: InterventionRequest['status']) => {
     switch (status) {
       case 'En Attente':
         return 'bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium';

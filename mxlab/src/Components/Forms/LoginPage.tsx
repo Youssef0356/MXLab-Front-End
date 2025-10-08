@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import logo from '../../assets/logo.png'
+
 // Temporary demo credentials
 const TEST_CREDENTIALS = {
   email: 'admin@cmms.fr',
