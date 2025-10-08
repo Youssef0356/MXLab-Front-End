@@ -1,26 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../../Components/Common/Layout';
-import { Search, Eye, RotateCcw, Clock, Printer } from 'lucide-react';
+import { Search, Eye, RotateCcw, Printer } from 'lucide-react';
+import interventionListData from '../../../api/json-simulations/interventionList.json';
 
 // Types for intervention data
 type InterventionStatus = 'En Attente' | 'Approuvé' | 'Rejeté';
 type Priorite = 'Haute' | 'Moyenne' | 'Basse';
 type InterventionRequest = {
     id: string;
+    requestId: string;
+    title: string;
     description: string;
-    equipement: string;
+    equipment: string;
     site: string;
     type: string;
-    priorite?: Priorite;
-    datecreation: string;
+    priority: Priorite;
+    dateCreation: string;
     technicien: string;
     etat: InterventionStatus;
+    estimatedDuration: string;
+    assignedTeam: string;
+    tools: string[];
+    parts: string[];
+    cost: string;
 };
 
 // Filter types
 type FilterStatus = 'Toutes les demandes' | 'En attente' | 'Approuvées' | 'Rejetées';
 
-const InterventionView: React.FC = () => {
+const InterventionList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('Toutes les demandes');
     const [selectedInterventionId, setSelectedInterventionId] = useState<string | null>(null);
@@ -28,49 +36,19 @@ const InterventionView: React.FC = () => {
     // TODO: Replace with actual API call to fetch interventions
     // const { data: interventions, isLoading, error } = useQuery('interventions', fetchInterventions);
 
-    // Placeholder data - replace with real data from backend
-    const [interventions] = useState<InterventionRequest[]>([
-        {
-            id: '1',
-            description: 'Problème moteur du convoyeur',
-            equipement: 'Le moteur émet un bruit de broyage inhabituel pendant le fonctionnement. Site de production C',
-            site: 'Fatma',
-            type: 'En Attente',
-            priorite: 'Haute',
-            datecreation: '2025/05/30 en 11:30 pm',
-            technicien: 'Bachir',
-            etat: 'En Attente'
-        },
-        {
-            id: '2',
-            description: 'Problème moteur du convoyeur',
-            equipement: 'Le moteur émet un bruit de broyage inhabituel pendant le fonctionnement. Site de production C',
-            site: 'Fatma',
-            type: 'En Attente',
-            priorite: 'Moyenne',
-            datecreation: '2025/05/30 en 11:30 pm',
-            technicien: 'Bachir',
-            etat: 'En Attente'
-        },
-        {
-            id: '3',
-            description: 'Problème moteur du convoyeur',
-            equipement: 'Le moteur émet un bruit de broyage inhabituel pendant le fonctionnement. Site de production C',
-            site: 'Fatma',
-            type: 'En Attente',
-            priorite: 'Basse',
-            datecreation: '2025/05/30 en 11:30 pm',
-            technicien: 'Bachir',
-            etat: 'En Attente'
-        },
-    ]);
+    const [interventions, setInterventions] = useState<InterventionRequest[]>([]);
+
+    useEffect(() => {
+        // Load data from JSON simulation
+        setInterventions(interventionListData as InterventionRequest[]);
+    }, []);
 
     const filteredInterventions = interventions.filter(intervention => {
         const matchesSearch = intervention.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            intervention.equipement.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            intervention.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
             intervention.site.toLowerCase().includes(searchTerm.toLowerCase()) ||
             intervention.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            intervention.datecreation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            intervention.dateCreation.toLowerCase().includes(searchTerm.toLowerCase()) ||
             intervention.technicien.toLowerCase().includes(searchTerm.toLowerCase()) ||
             intervention.etat.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -212,7 +190,7 @@ const InterventionView: React.FC = () => {
                                         <div className="flex-shrink-0 w-12 p-4 flex items-center justify-center">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-gray-300 w-4 h-4"
+                                                className="rounded border-gray-300 w-8 h-8"
                                                 checked={selectedInterventionId === intervention.id}
                                                 onChange={() => handleCheckboxChange(intervention.id)}
                                             />
@@ -226,8 +204,8 @@ const InterventionView: React.FC = () => {
                                         {/* Description */}
                                         <div className="flex-shrink-0 w-64 p-4 flex items-center">
                                             <div className="flex items-start gap-2 w-full">
-                                                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${intervention.priorite === 'Haute' ? 'bg-red-500' :
-                                                    intervention.priorite === 'Moyenne' ? 'bg-yellow-500' : 'bg-green-500'
+                                                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${intervention.priority === 'Haute' ? 'bg-red-500' :
+                                                    intervention.priority === 'Moyenne' ? 'bg-yellow-500' : 'bg-green-500'
                                                     }`} />
                                                 <p className="text-sm text-gray-600 line-clamp-2 overflow-hidden">{intervention.description}</p>
                                             </div>
@@ -235,7 +213,7 @@ const InterventionView: React.FC = () => {
 
                                         {/* Equipment */}
                                         <div className="flex-shrink-0 w-80 p-4 flex items-center">
-                                            <span className="text-sm text-gray-900 truncate w-full">{intervention.equipement}</span>
+                                            <span className="text-sm text-gray-900 truncate w-full">{intervention.equipment}</span>
                                         </div>
 
                                         {/* Site */}
@@ -250,12 +228,12 @@ const InterventionView: React.FC = () => {
 
                                         {/* Priority */}
                                         <div className="flex-shrink-0 w-24 p-4 flex items-center">
-                                            <span className="text-sm text-gray-600">{intervention.priorite}</span>
+                                            <span className="text-sm text-gray-600">{intervention.priority}</span>
                                         </div>
 
                                         {/* Date */}
                                         <div className="flex-shrink-0 w-48 p-4 flex items-center">
-                                            <span className="text-sm text-gray-600">{intervention.datecreation}</span>
+                                            <span className="text-sm text-gray-600">{intervention.dateCreation}</span>
                                         </div>
 
                                         {/* Technician */}
@@ -325,4 +303,4 @@ const InterventionView: React.FC = () => {
     );
 };
 
-export default InterventionView;
+export default InterventionList;

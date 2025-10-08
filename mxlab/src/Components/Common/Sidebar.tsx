@@ -117,9 +117,9 @@ const Sidebar:React.FC = () => {
     const routeMap: Record<string, string> = {
       'Dashboard': '/dashboard',
       'visualisations': '/dashboard',
-      'InterventionView': '/intervention-view',
-      'InterventionCreate': '/intervention-create',
-      'Intervention-TotalView': '/intervention-total-view',
+      'InterventionRequests': '/InterventionRequests',
+      'InterventionCreate': '/InterventionCreate',
+      'InterventionList': '/InterventionList',
       'UserView': '/user-view',
       'UserCreate': '/user-create',
       'SiteView': '/site-view',
@@ -170,9 +170,9 @@ const Sidebar:React.FC = () => {
       label: "Ordre d'Intervention",
       icon: ClipboardList,
       subItems: [
-        { id: 'InterventionView', label: "Les demandes d'interventions" },
+        { id: 'InterventionRequests', label: "Les demandes d'interventions" },
         { id: 'InterventionCreate', label: "Créer order d'intervention" },
-        { id: 'Intervention-TotalView', label: "Liste des ordres d'interventions" }
+        { id: 'InterventionList', label: "Liste des ordres d'interventions" }
       ]
     },
     {
