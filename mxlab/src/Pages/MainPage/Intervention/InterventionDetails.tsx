@@ -71,13 +71,11 @@ const InterventionDetails: React.FC = () => {
   };
 
   const handleApprove = () => {
-    // TODO: Implement approve functionality
-    console.log('Approving intervention:', id);
+    navigate(`/interventionApproval/${id}?action=approve`);
   };
 
   const handleReject = () => {
-    // TODO: Implement reject functionality
-    console.log('Rejecting intervention:', id);
+    navigate(`/interventionApproval/${id}?action=reject`);
   };
 
   const handlePrint = () => {

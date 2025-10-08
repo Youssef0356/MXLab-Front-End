@@ -16,7 +16,7 @@ const App: React.FC = () => {
       <Route path='/interventionCreate' element={<InterventionCreate/>}/>
       <Route path='/interventionRequests' element={<InterventionRequests/>}/>
       <Route path='/interventionList' element={<InterventionList/>}/>
-      <Route path='/interventionApproval' element={<InterventionApproval/>}/>
+      <Route path='/interventionApproval/:id' element={<InterventionApproval/>}/>
       <Route path='/interventionDetails/:id' element={<InterventionDetails/>}/>
 
     </Routes>

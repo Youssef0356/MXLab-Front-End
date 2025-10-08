@@ -11,6 +11,26 @@ const InterventionList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('Toutes les demandes');
     const [selectedInterventionId, setSelectedInterventionId] = useState<string | null>(null);
+    
+    // Column width state for resizable columns
+    const [columnWidths, setColumnWidths] = useState({
+        checkbox: 48,    // 12 * 4 = 48px
+        id: 64,          // 16 * 4 = 64px  
+        description: 256, // 64 * 4 = 256px
+        equipment: 320,   // 80 * 4 = 320px
+        site: 128,        // 32 * 4 = 128px
+        type: 128,        // 32 * 4 = 128px
+        priority: 96,     // 24 * 4 = 96px
+        date: 192,        // 48 * 4 = 192px
+        technician: 128,  // 32 * 4 = 128px
+        status: 128,      // 32 * 4 = 128px
+        actions: 128      // 32 * 4 = 128px
+    });
+    
+    // Resize state
+    const [isResizing, setIsResizing] = useState<string | null>(null);
+    const [startX, setStartX] = useState(0);
+    const [startWidth, setStartWidth] = useState(0);
 
     // TODO: Replace with actual API call to fetch interventions
     // const { data: interventions, isLoading, error } = useQuery('interventions', fetchInterventions);
@@ -89,6 +109,65 @@ const InterventionList: React.FC = () => {
         console.log(`Printing intervention ${interventionId}`);
     };
 
+    // Resize handlers
+    const handleMouseDown = (e: React.MouseEvent, columnKey: string) => {
+        e.preventDefault();
+        console.log('Mouse down on column:', columnKey, 'at X:', e.clientX);
+        setIsResizing(columnKey);
+        setStartX(e.clientX);
+        setStartWidth(columnWidths[columnKey as keyof typeof columnWidths]);
+    };
+
+    const handleMouseMove = React.useCallback((e: MouseEvent) => {
+        if (!isResizing) return;
+        
+        const deltaX = e.clientX - startX;
+        const newWidth = Math.max(50, startWidth + deltaX); // Minimum width of 50px
+        
+        console.log('Mouse move - Column:', isResizing, 'Delta:', deltaX, 'New width:', newWidth);
+        
+        setColumnWidths(prev => ({
+            ...prev,
+            [isResizing]: newWidth
+        }));
+    }, [isResizing, startX, startWidth]);
+
+    const handleMouseUp = React.useCallback(() => {
+        setIsResizing(null);
+    }, []);
+
+    // Cleanup event listeners on unmount and when dependencies change
+    React.useEffect(() => {
+        if (isResizing) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
+        
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing, handleMouseMove, handleMouseUp]);
+
+    // Resize handle component
+    const ResizeHandle: React.FC<{ columnKey: string }> = ({ columnKey }) => (
+        <div
+            className={`absolute right-0 top-0 bottom-0 w-2 cursor-col-resize group transition-colors ${
+                isResizing === columnKey 
+                    ? 'bg-blue-500' 
+                    : 'bg-transparent hover:bg-blue-400'
+            }`}
+            onMouseDown={(e) => handleMouseDown(e, columnKey)}
+            title={`Resize ${columnKey} column`}
+        >
+            <div className={`w-full h-full transition-colors ${
+                isResizing === columnKey 
+                    ? 'bg-blue-500' 
+                    : 'group-hover:bg-blue-400'
+            }`} />
+        </div>
+    );
+
     return (
         <Layout>
             <div className="p-6 max-w-7xl mx-auto">
@@ -136,25 +215,56 @@ const InterventionList: React.FC = () => {
                 </div>
 
                 {/* Interventions Table */}
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${
+                    isResizing ? 'select-none' : ''
+                }`}>
                     {/* Horizontal Scroll Container */}
                     <div className="overflow-x-auto">
                         <div className="min-w-max">
                             {/* Table Header */}
                             <div className="flex bg-gray-50 border-b border-gray-200 font-medium text-gray-700">
-                                <div className="flex-shrink-0 w-12 p-4 flex items-center justify-center">
+                                <div className="relative flex-shrink-0 p-4 flex items-center justify-center" style={{ width: `${columnWidths.checkbox}px` }}>
                                     <span className="text-center">-</span>
                                 </div>
-                                <div className="flex-shrink-0 w-16 p-4">Id</div>
-                                <div className="flex-shrink-0 w-64 p-4">Description</div>
-                                <div className="flex-shrink-0 w-80 p-4">Equipement</div>
-                                <div className="flex-shrink-0 w-32 p-4">Site</div>
-                                <div className="flex-shrink-0 w-32 p-4">Type</div>
-                                <div className="flex-shrink-0 w-24 p-4">Priorité</div>
-                                <div className="flex-shrink-0 w-48 p-4">Date de soumission</div>
-                                <div className="flex-shrink-0 w-32 p-4">Technicien</div>
-                                <div className="flex-shrink-0 w-32 p-4">État</div>
-                                <div className="flex-shrink-0 w-32 p-4">Actions</div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.id}px` }}>
+                                    Id
+                                    <ResizeHandle columnKey="id" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.description}px` }}>
+                                    Description
+                                    <ResizeHandle columnKey="description" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.equipment}px` }}>
+                                    Equipement
+                                    <ResizeHandle columnKey="equipment" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.site}px` }}>
+                                    Site
+                                    <ResizeHandle columnKey="site" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.type}px` }}>
+                                    Type
+                                    <ResizeHandle columnKey="type" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.priority}px` }}>
+                                    Priorité
+                                    <ResizeHandle columnKey="priority" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.date}px` }}>
+                                    Date de soumission
+                                    <ResizeHandle columnKey="date" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.technician}px` }}>
+                                    Technicien
+                                    <ResizeHandle columnKey="technician" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.status}px` }}>
+                                    État
+                                    <ResizeHandle columnKey="status" />
+                                </div>
+                                <div className="relative flex-shrink-0 p-4" style={{ width: `${columnWidths.actions}px` }}>
+                                    Actions
+                                </div>
                             </div>
 
                             {/* Table Body */}
@@ -162,7 +272,7 @@ const InterventionList: React.FC = () => {
                                 {filteredInterventions.map((intervention) => (
                                     <div key={intervention.id} className="flex hover:bg-gray-50 transition-colors">
                                         {/* Checkbox */}
-                                        <div className="flex-shrink-0 w-12 p-4 flex items-center justify-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center justify-center" style={{ width: `${columnWidths.checkbox}px` }}>
                                             <input
                                                 type="checkbox"
                                                 className="rounded border-gray-300 w-8 h-8"
@@ -172,12 +282,12 @@ const InterventionList: React.FC = () => {
                                         </div>
 
                                         {/* ID */}
-                                        <div className="flex-shrink-0 w-16 p-4 flex items-center">
-                                            <span className="text-sm font-medium">{intervention.id}</span>
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.id}px` }}>
+                                            <span className="text-sm font-medium truncate">{intervention.id}</span>
                                         </div>
 
                                         {/* Description */}
-                                        <div className="flex-shrink-0 w-64 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.description}px` }}>
                                             <div className="flex items-start gap-2 w-full">
                                                 <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${intervention.priority === 'Haute' ? 'bg-red-500' :
                                                     intervention.priority === 'Moyenne' ? 'bg-yellow-500' : 'bg-green-500'
@@ -187,44 +297,44 @@ const InterventionList: React.FC = () => {
                                         </div>
 
                                         {/* Equipment */}
-                                        <div className="flex-shrink-0 w-80 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.equipment}px` }}>
                                             <span className="text-sm text-gray-900 truncate w-full">{intervention.equipment}</span>
                                         </div>
 
                                         {/* Site */}
-                                        <div className="flex-shrink-0 w-32 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.site}px` }}>
                                             <span className="text-sm text-gray-600 truncate w-full">{intervention.site}</span>
                                         </div>
 
                                         {/* Type */}
-                                        <div className="flex-shrink-0 w-32 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.type}px` }}>
                                             <span className="text-sm text-gray-600 truncate w-full">{intervention.type}</span>
                                         </div>
 
                                         {/* Priority */}
-                                        <div className="flex-shrink-0 w-24 p-4 flex items-center">
-                                            <span className="text-sm text-gray-600">{intervention.priority}</span>
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.priority}px` }}>
+                                            <span className="text-sm text-gray-600 truncate">{intervention.priority}</span>
                                         </div>
 
                                         {/* Date */}
-                                        <div className="flex-shrink-0 w-48 p-4 flex items-center">
-                                            <span className="text-sm text-gray-600">{intervention.dateCreation}</span>
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.date}px` }}>
+                                            <span className="text-sm text-gray-600 truncate">{intervention.dateCreation}</span>
                                         </div>
 
                                         {/* Technician */}
-                                        <div className="flex-shrink-0 w-32 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.technician}px` }}>
                                             <span className="text-sm text-gray-600 truncate w-full">{intervention.technicien}</span>
                                         </div>
 
                                         {/* Status */}
-                                        <div className="flex-shrink-0 w-32 p-4 flex items-center">
+                                        <div className="flex-shrink-0 p-4 flex items-center" style={{ width: `${columnWidths.status}px` }}>
                                             <span className={getStatusBadge(intervention.etat)}>
                                                 {intervention.etat}
                                             </span>
                                         </div>
 
                                         {/* Actions */}
-                                        <div className="flex-shrink-0 w-32 p-4 flex items-center gap-2">
+                                        <div className="flex-shrink-0 p-4 flex items-center gap-2" style={{ width: `${columnWidths.actions}px` }}>
                                             <button
                                                 onClick={() => handleViewDetails(intervention.id)}
                                                 className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
