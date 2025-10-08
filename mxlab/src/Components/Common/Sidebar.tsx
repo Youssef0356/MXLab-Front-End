@@ -21,10 +21,7 @@ const Sidebar:React.FC = () => {
     return localStorage.getItem('sidebar-active-item') || 'Dashboard';
   });
   
-  const [expandedItems, setExpandedItems] = useState<Record<string,boolean>>(() => {
-    const saved = localStorage.getItem('sidebar-expanded-items');
-    return saved ? JSON.parse(saved) : {};
-  });
+  const [expandedItems, setExpandedItems] = useState<Record<string,boolean>>({});
 
   const toggleExpanded = (itemId : string) => {
     setExpandedItems(prev => {
@@ -41,10 +38,10 @@ const Sidebar:React.FC = () => {
   // Map routes back to menu item IDs
   const getItemIdForRoute = (pathname: string): string => {
     const routeToItemMap: Record<string, string> = {
-      '/dashboard': 'Dashboard',
-      '/intervention-view': 'InterventionView',
-      '/intervention-create': 'InterventionCreate',
-      '/intervention-total-view': 'Intervention-TotalView',
+      '/dashboard': 'visualisations',
+      '/interventionRequests': 'InterventionRequests',
+      '/interventionCreate': 'InterventionCreate',
+      '/interventionList': 'InterventionList',
       '/user-view': 'UserView',
       '/user-create': 'UserCreate',
       '/site-view': 'SiteView',
@@ -58,6 +55,15 @@ const Sidebar:React.FC = () => {
       '/calendar': 'Calendar',
       '/settings': 'settings'
     };
+    
+    // Handle dynamic routes (with parameters)
+    if (pathname.startsWith('/interventionDetails/')) {
+      return 'InterventionRequests'; // Details page belongs to requests section
+    }
+    if (pathname.startsWith('/interventionApproval/')) {
+      return 'InterventionRequests'; // Approval page belongs to requests section
+    }
+    
     return routeToItemMap[pathname] || 'Dashboard';
   };
 
@@ -66,60 +72,16 @@ const Sidebar:React.FC = () => {
     const currentItemId = getItemIdForRoute(location.pathname);
     setActiveItem(currentItemId);
     localStorage.setItem('sidebar-active-item', currentItemId);
-
-    // Auto-expand parent menu if we're on a sub-item
-    const menuItems = [
-      {
-        id: 'Dashboard',
-        subItems: ['visualisations']
-      },
-      {
-        id: 'orders',
-        subItems: ['InterventionView', 'InterventionCreate', 'Intervention-TotalView']
-      },
-      {
-        id: 'users',
-        subItems: ['UserView', 'UserCreate']
-      },
-      {
-        id: 'surveillance',
-        subItems: ['SiteView', 'SiteCreate', 'SiteCart']
-      },
-      {
-        id: 'equipment',
-        subItems: ['EquipementsView', 'EquipementsCreate', 'EquipementsIOT']
-      },
-      {
-        id: 'maintenance',
-        subItems: ['MaintainanceView', 'MaintainanceType', 'Calendar']
-      }
-    ];
-
-    // Find parent menu and expand it if current item is a sub-item
-    const parentMenu = menuItems.find(menu => 
-      menu.subItems && menu.subItems.includes(currentItemId)
-    );
-
-    if (parentMenu && !expandedItems[parentMenu.id]) {
-      setExpandedItems(prev => {
-        const newState = {
-          ...prev,
-          [parentMenu.id]: true
-        };
-        localStorage.setItem('sidebar-expanded-items', JSON.stringify(newState));
-        return newState;
-      });
-    }
-  }, [location.pathname, expandedItems]);
+  }, [location.pathname]);
 
   // Map menu item IDs to routes
   const getRouteForItem = (itemId: string): string => {
     const routeMap: Record<string, string> = {
       'Dashboard': '/dashboard',
       'visualisations': '/dashboard',
-      'InterventionRequests': '/InterventionRequests',
-      'InterventionCreate': '/InterventionCreate',
-      'InterventionList': '/InterventionList',
+      'InterventionRequests': '/interventionRequests',
+      'InterventionCreate': '/interventionCreate',
+      'InterventionList': '/interventionList',
       'UserView': '/user-view',
       'UserCreate': '/user-create',
       'SiteView': '/site-view',
@@ -136,14 +98,28 @@ const Sidebar:React.FC = () => {
     return routeMap[itemId] || '/dashboard';
   };
 
-  const handleItemClick = (itemId: string, hasSubItems: boolean) => {
-    setActiveItem(itemId);
-    localStorage.setItem('sidebar-active-item', itemId);
-    
-    if (hasSubItems) {
-      toggleExpanded(itemId);
+  const handleItemClick = (itemId: string, hasSubItems: boolean, subItems?: Array<{id: string, label: string}>) => {
+    if (hasSubItems && subItems && subItems.length > 0) {
+      const isCurrentlyExpanded = expandedItems[itemId];
+      
+      if (!isCurrentlyExpanded) {
+        // First click: Expand menu and navigate to first sub-item
+        setExpandedItems(prev => ({ ...prev, [itemId]: true }));
+        
+        const firstSubItem = subItems[0];
+        setActiveItem(firstSubItem.id);
+        localStorage.setItem('sidebar-active-item', firstSubItem.id);
+        
+        const route = getRouteForItem(firstSubItem.id);
+        navigate(route);
+      } else {
+        // Second click: Just toggle (collapse) the menu
+        setExpandedItems(prev => ({ ...prev, [itemId]: false }));
+      }
     } else {
-      // Navigate to the route if it's a leaf item
+      // Navigate to the route if it's a leaf item (like Settings)
+      setActiveItem(itemId);
+      localStorage.setItem('sidebar-active-item', itemId);
       const route = getRouteForItem(itemId);
       navigate(route);
     }
@@ -154,6 +130,14 @@ const Sidebar:React.FC = () => {
     localStorage.setItem('sidebar-active-item', subItemId);
     const route = getRouteForItem(subItemId);
     navigate(route);
+  };
+
+  // Helper function to check if item should be active
+  const isItemActive = (item: any) => {
+    if (item.subItems) {
+      return item.subItems.some((subItem: any) => subItem.id === activeItem);
+    }
+    return activeItem === item.id;
   };
 
   const menuItems = [
@@ -241,14 +225,16 @@ const Sidebar:React.FC = () => {
           {menuItems.map((item) => (
             <li key={item.id} className="list-none"> 
               <button
-                onClick={() => handleItemClick(item.id, !!item.subItems)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-left transition-all duration-300 ${activeItem === item.id
+                onClick={() => handleItemClick(item.id, !!item.subItems, item.subItems)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-left transition-all duration-300 ${
+                  isItemActive(item)
                     ? 'bg-gray-500 text-white shadow-lg shadow-gray-200  ring-1 ring-gray-300'
                     : 'text-slate-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 hover:text-gray-700 hover:shadow-md hover:shadow-gray-200 '
                   }`}
               >
                 <item.icon
-                  className={`w-5 h-5 transition-all duration-300 ${activeItem === item.id
+                  className={`w-5 h-5 transition-all duration-300 ${
+                    isItemActive(item)
                       ? 'text-white drop-shadow-sm'
                       : 'text-slate-500 group-hover:text-gray-600'
                     }`}
@@ -257,7 +243,7 @@ const Sidebar:React.FC = () => {
                 {item.subItems && (
                   <ChevronUp
                     className={`w-4 h-4 transition-all duration-300 ${expandedItems[item.id] ? 'rotate-180' : ''
-                      } ${activeItem === item.id ? 'text-white' : 'text-slate-400'}`}
+                      } ${isItemActive(item) ? 'text-white' : 'text-slate-400'}`}
                   />
                 )}
               </button>
@@ -271,7 +257,7 @@ const Sidebar:React.FC = () => {
                         <button
                           onClick={() => handleSubItemClick(subItem.id)}
                           className={`w-full text-left px-3 py-2.5 rounded-md text-sm transition-all duration-300 ${activeItem === subItem.id
-                              ? 'text-black   bg-transparent'
+                              ? 'text-black bg-transparent'
                               : 'text-slate-600 hover:bg-gradient-to-r hover:from-gray-200 hover:to-gray-300 hover:text-gray-700 hover:shadow-md hover:shadow-gray-200 '
                             }`}
                         >

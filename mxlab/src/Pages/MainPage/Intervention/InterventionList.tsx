@@ -112,7 +112,6 @@ const InterventionList: React.FC = () => {
     // Resize handlers
     const handleMouseDown = (e: React.MouseEvent, columnKey: string) => {
         e.preventDefault();
-        console.log('Mouse down on column:', columnKey, 'at X:', e.clientX);
         setIsResizing(columnKey);
         setStartX(e.clientX);
         setStartWidth(columnWidths[columnKey as keyof typeof columnWidths]);
@@ -123,8 +122,6 @@ const InterventionList: React.FC = () => {
         
         const deltaX = e.clientX - startX;
         const newWidth = Math.max(50, startWidth + deltaX); // Minimum width of 50px
-        
-        console.log('Mouse move - Column:', isResizing, 'Delta:', deltaX, 'New width:', newWidth);
         
         setColumnWidths(prev => ({
             ...prev,
