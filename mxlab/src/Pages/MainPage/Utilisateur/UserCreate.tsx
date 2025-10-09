@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from "../../../Components/Common/Layout";
-import { User, Mail, Phone, MapPin, Shield, Calendar, Save, X } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Shield, Calendar, Save, X, ArrowLeft } from 'lucide-react';
 import usersData from '../../../api/json-simulations/users.json';
 
 interface UserFormData {
@@ -13,15 +14,37 @@ interface UserFormData {
 }
 
 const UserCreate: React.FC = () => {
-  const [formData, setFormData] = useState<UserFormData>({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    privilege: 'employee',
-    location: ''
-  });
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const isEditMode = !!id;
 
+  // Get initial form data - either empty for create mode or pre-filled for edit mode
+  const getInitialFormData = (): UserFormData => {
+    if (isEditMode && id) {
+      const user = usersData.find(u => u.id === id);
+      if (user) {
+        return {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+          phone: user.phone,
+          privilege: user.privilege,
+          location: user.location
+        };
+      }
+    }
+    // Default empty form for create mode
+    return {
+      name: '',
+      email: '',
+      password: '',
+      phone: '',
+      privilege: 'employee',
+      location: ''
+    };
+  };
+
+  const [formData, setFormData] = useState<UserFormData>(getInitialFormData());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -45,54 +68,68 @@ const UserCreate: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Create new user object
-      const newUser = {
-        id: generateUserId(),
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        dateCreation: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/'),
-        privilege: formData.privilege,
-        location: formData.location,
-      };
+      if (isEditMode) {
+        // Update existing user
+        console.log('Updating user:', id, formData);
+        // In a real app, you would make an API call here
+        setTimeout(() => {
+          setShowSuccess(true);
+          setIsSubmitting(false);
+          setTimeout(() => {
+            navigate(`/userView/${id}`);
+          }, 1500);
+        }, 1000);
+      } else {
+        // Create new user object
+        const newUser = {
+          id: generateUserId(),
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          phone: formData.phone,
+          dateCreation: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/'),
+          privilege: formData.privilege,
+          location: formData.location,
+        };
 
-      // In a real app, you would send this to an API
-      // For now, we'll simulate the process and log to console
-      console.log('New user created:', newUser);
-      
-      // Show success message
-      setShowSuccess(true);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        password: '',
-        phone: '',
-        privilege: 'employee',
-        location: ''
-      });
+        // In a real app, you would send this to an API
+        // For now, we'll simulate the process and log to console
+        console.log('New user created:', newUser);
+        
+        // Show success message
+        setShowSuccess(true);
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          phone: '',
+          privilege: 'employee',
+          location: ''
+        });
 
-      // Hide success message after 3 seconds
-      setTimeout(() => setShowSuccess(false), 3000);
-
+        // Hide success message after 3 seconds
+        setTimeout(() => setShowSuccess(false), 3000);
+      }
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error creating/updating user:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      phone: '',
-      privilege: 'employee',
-      location: ''
-    });
+    // Reset to initial form data (either original user data or empty form)
+    setFormData(getInitialFormData());
+  };
+
+  const handleBack = () => {
+    if (isEditMode) {
+      navigate(`/userView/${id}`);
+    } else {
+      navigate('/userList');
+    }
   };
 
   return (
@@ -100,11 +137,22 @@ const UserCreate: React.FC = () => {
       <div className="p-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
+          <button 
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-lg transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {isEditMode ? 'Retour au profil' : 'Retour à la liste'}
+          </button>
+          
           <h1 className="text-3xl font-bold text-slate-800 mb-2">
-            Création d'un utilisateur
+            {isEditMode ? 'Modifier le profil utilisateur' : 'Création d\'un utilisateur'}
           </h1>
           <p className="text-slate-600">
-            Remplissez le formulaire ci-dessous pour créer un nouvel utilisateur dans le système.
+            {isEditMode 
+              ? 'Modifiez les informations de l\'utilisateur ci-dessous.'
+              : 'Remplissez le formulaire ci-dessous pour créer un nouvel utilisateur dans le système.'
+            }
           </p>
         </div>
 
@@ -115,7 +163,9 @@ const UserCreate: React.FC = () => {
               <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">✓</span>
               </div>
-              <span className="font-medium">Utilisateur créé avec succès!</span>
+              <span className="font-medium">
+                {isEditMode ? 'Profil mis à jour avec succès!' : 'Utilisateur créé avec succès!'}
+              </span>
             </div>
           </div>
         )}
@@ -258,7 +308,10 @@ const UserCreate: React.FC = () => {
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Save className="w-4 h-4" />
-                {isSubmitting ? 'Création en cours...' : 'Créer l\'utilisateur'}
+                {isSubmitting 
+                  ? (isEditMode ? 'Mise à jour en cours...' : 'Création en cours...')
+                  : (isEditMode ? 'Mise à jour' : 'Créer l\'utilisateur')
+                }
               </button>
               
               <button
@@ -274,18 +327,20 @@ const UserCreate: React.FC = () => {
         </div>
 
         {/* Information Note */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start gap-2">
-            <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium mb-1">Note:</p>
-              <p>
-                L'ID utilisateur sera généré automatiquement et la date de création sera définie à aujourd'hui. 
-                Le nouvel utilisateur sera activé par défaut.
-              </p>
+        {!isEditMode && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div className="text-sm text-blue-800">
+                <p className="font-medium mb-1">Note:</p>
+                <p>
+                  L'ID utilisateur sera généré automatiquement et la date de création sera définie à aujourd'hui. 
+                  Le nouvel utilisateur sera activé par défaut.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </Layout>
   );

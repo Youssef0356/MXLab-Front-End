@@ -1,39 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from "../../../Components/Common/Layout";
 import { User, Mail, Phone, MapPin, Shield, Calendar, ArrowLeft, Edit } from 'lucide-react';
 import usersData from '../../../api/json-simulations/users.json';
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  privilege: string;
-  location: string;
-  dateCreation: string;
-}
 
 const UserView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading and find user by ID
-    const timer = setTimeout(() => {
-      const foundUser = usersData.find(u => u.id === id);
-      setUser(foundUser || null);
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [id]);
+  
+  // Directly find the user from static data
+  const user = usersData.find(u => u.id === id) || null;
 
   const handleBack = () => {
     navigate('/userList');
+  };
+
+  const handleEdit = () => {
+    navigate(`/userCreate/${id}`);
   };
 
   const getPrivilegeColor = (privilege: string) => {
@@ -44,20 +28,6 @@ const UserView: React.FC = () => {
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50 p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   if (!user) {
     return (
@@ -118,12 +88,12 @@ const UserView: React.FC = () => {
           <div className="relative">
             {/* Background decorative elements */}
             <div className="absolute -top-4 -left-4 w-24 h-24 bg-blue-200/30 rounded-full blur-xl"></div>
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-200/30 rounded-full blur-xl"></div>
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gray-200/30 rounded-full blur-xl"></div>
             
             {/* Main Card */}
             <div className="relative bg-white/70 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
               {/* Card Header with Gradient */}
-              <div className="relative bg-gradient-to-r from-blue-600/90 to-purple-600/90 p-8 text-white">
+              <div className="relative bg-gradient-to-r from-blue-600/90 to-gray-600/90 p-8 text-white">
                 <div className="absolute inset-0 bg-black/10"></div>
                 <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
                   {/* Avatar */}
@@ -192,15 +162,15 @@ const UserView: React.FC = () => {
                   {/* Account Information */}
                   <div className="space-y-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-purple-600" />
+                      <Shield className="w-5 h-5 text-gray-600" />
                       Informations du compte
                     </h3>
                     
                     <div className="space-y-4">
                       {/* Creation Date */}
                       <div className="flex items-center gap-4 p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-white/30">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <Calendar className="w-5 h-5 text-purple-600" />
+                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <Calendar className="w-5 h-5 text-gray-600" />
                         </div>
                         <div>
                           <p className="text-sm text-gray-500 font-medium">Date de création</p>
@@ -241,7 +211,10 @@ const UserView: React.FC = () => {
                 {/* Action Buttons */}
                 <div className="mt-8 pt-6 border-t border-gray-200/50">
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    <button 
+                      onClick={handleEdit}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                    >
                       <Edit className="w-4 h-4" />
                       Modifier le profil
                     </button>
@@ -257,7 +230,7 @@ const UserView: React.FC = () => {
               </div>
 
               {/* Glassmorphism overlay effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-gray-500/5 pointer-events-none"></div>
             </div>
           </div>
         </div>

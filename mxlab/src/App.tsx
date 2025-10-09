@@ -23,6 +23,7 @@ const App: React.FC = () => {
       <Route path='/interventionApproval/:id' element={<InterventionApproval/>}/>
       <Route path='/interventionDetails/:id' element={<InterventionDetails/>}/>
       <Route path='/userCreate' element={<UserCreate/>}/>
+      <Route path='/userCreate/:id' element={<UserCreate/>}/>
       <Route path='/userView/:id' element={<UserView/>}/>
       <Route path='/userList' element={<UserList/>}/>
       <Route path='/siteView' element={<div>Site View Page</div>}/>
