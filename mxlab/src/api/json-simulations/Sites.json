@@ -1,0 +1,39 @@
+[
+  {
+    "id": "SITE-001",
+    "name": "Site de Production A",
+    "location": "Tunis, Tunisie",
+    "address": "Zone Industrielle, Tunis 1000",
+    "manager": "Ahmed Ben Ali",
+    "status": "bon etat",
+    "dateCreated": "2024/01/15"
+  },
+  {
+    "id": "SITE-007",
+    "name": "Site Recherche",
+    "location": "Nabeul, Tunisie",
+    "address": "Zone R&D, Nabeul 8000",
+    "manager": "Youssef Hamdi",
+    "status": "en cours de maintenance",
+    "dateCreated": "2024/07/22"
+  },
+  {
+    "id": "SITE-008",
+    "name": "Site Distribution",
+    "location": "Kairouan, Tunisie",
+    "address": "Zone Distribution, Kairouan 3100",
+    "manager": "Nadia Mejri",
+    "status": "bon etat",
+    "dateCreated": "2024/08/14"
+  },
+  {
+    "id": "SITE-009",
+    "name": "Site Stockage",
+    "location": "Mahdia, Tunisie",
+    "address": "Zone Stockage, Mahdia 5100",
+    "manager": "Tarek Zouari",
+    "status": "en panne",
+    "dateCreated": "2024/09/03"
+  }
+    
+]

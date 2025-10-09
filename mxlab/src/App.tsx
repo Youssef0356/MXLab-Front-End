@@ -9,6 +9,9 @@ import InterventionDetails from './Pages/MainPage/Intervention/InterventionDetai
 import UserView from './Pages/MainPage/Utilisateur/UserView';
 import UserCreate from './Pages/MainPage/Utilisateur/UserCreate';
 import UserList from './Pages/MainPage/Utilisateur/UserList';
+import SiteList from './Pages/MainPage/Site/SiteList';
+import SiteCreate from './Pages/MainPage/Site/SiteCreate';
+import SitesView from './Pages/MainPage/Site/SitesView';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -26,9 +29,9 @@ const App: React.FC = () => {
       <Route path='/userCreate/:id' element={<UserCreate/>}/>
       <Route path='/userView/:id' element={<UserView/>}/>
       <Route path='/userList' element={<UserList/>}/>
-      <Route path='/siteView' element={<div>Site View Page</div>}/>
-      <Route path='/siteCreate' element={<div>Site Create Page</div>}/>
-      <Route path='/siteCart' element={<div>Site Cart Page</div>}/>
+      <Route path='/siteView' element={<SiteList/>}/>
+      <Route path='/siteCreate' element={<SiteCreate/>}/>
+      <Route path='/siteCart' element={<SitesView/>}/>
       <Route path='/equipmentsView' element={<div>Equipments View Page</div>}/>
       <Route path='/equipmentsCreate' element={<div>Equipments Create Page</div>}/>
       <Route path='/equipmentsIOT' element={<div>Equipments IOT Page</div>}/>
