@@ -11,7 +11,6 @@ interface UserData {
   phone: string;
   privilege: string;
   location: string;
-  isActive: boolean;
   dateCreation: string;
 }
 
@@ -30,26 +29,21 @@ const UserList: React.FC = () => {
 
   const getPrivilegeColor = (privilege: string) => {
     switch (privilege.toLowerCase()) {
-      case 'admin':
-      case 'administrateur':
-        return 'bg-red-100 text-red-800 border-red-200';
       case 'superviseur':
         return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'manager':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const getStatusColor = (isActive: boolean) => {
-    return isActive 
-      ? 'bg-green-100 text-green-800 border-green-200'
-      : 'bg-red-100 text-red-800 border-red-200';
-  };
+  
 
   const handleCreateUser = () => {
-    navigate('/user-create');
+    navigate('/userCreate');
+  };
+
+  const handleViewUser = (userId: string) => {
+    navigate(`/userView/${userId}`);
   };
 
   return (
@@ -92,7 +86,7 @@ const UserList: React.FC = () => {
         </div>
 
         {/* Users Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-24">
           {filteredUsers.map((user) => (
             <div
               key={user.id}
@@ -101,13 +95,13 @@ const UserList: React.FC = () => {
               {/* Glassmorphism Card */}
               <div className="relative bg-white/70 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-white/80">
                 {/* Background Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-gray-50/30 rounded-2xl"></div>
                 
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Avatar */}
                   <div className="flex justify-center mb-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-gray-600 rounded-full flex items-center justify-center shadow-lg">
                       <User className="w-8 h-8 text-white" />
                     </div>
                   </div>
@@ -150,15 +144,13 @@ const UserList: React.FC = () => {
                       <Shield className="w-3 h-3" />
                       {user.privilege}
                     </span>
-
-                    {/* Status Badge */}
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(user.isActive)}`}>
-                      {user.isActive ? 'Actif' : 'Inactif'}
-                    </span>
                   </div>
 
                   {/* Action Button */}
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  <button 
+                    onClick={() => handleViewUser(user.id)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
                     Voir profil
                   </button>
                 </div>

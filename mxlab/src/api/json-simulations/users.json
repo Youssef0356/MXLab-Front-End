@@ -7,8 +7,7 @@
     "phone": "+216 98524576",
     "dateCreation": "2024/01/15",
     "privilege": "Superviseur",
-    "location": "Site de Production Site A",
-    "isActive": true
+    "location": "Site de Production Site A"
   },
   {
     "id": "EMP-0214",
@@ -18,7 +17,6 @@
     "phone": "+216 98524576",
     "dateCreation": "2024/01/15",
     "privilege": "employee",
-    "location": "Site de Production Site A",
-    "isActive": true
+    "location": "Site de Production Site A"
   }
 ]

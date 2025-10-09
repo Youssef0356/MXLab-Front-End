@@ -22,9 +22,15 @@ const App: React.FC = () => {
       <Route path='/interventionList' element={<InterventionList/>}/>
       <Route path='/interventionApproval/:id' element={<InterventionApproval/>}/>
       <Route path='/interventionDetails/:id' element={<InterventionDetails/>}/>
-      <Route path='/user-view' element={<UserView/>}/>
-      <Route path='/user-create' element={<UserCreate/>}/>
-      <Route path='/user-list' element={<UserList/>}/>
+      <Route path='/userCreate' element={<UserCreate/>}/>
+      <Route path='/userView/:id' element={<UserView/>}/>
+      <Route path='/userList' element={<UserList/>}/>
+      <Route path='/siteView' element={<div>Site View Page</div>}/>
+      <Route path='/siteCreate' element={<div>Site Create Page</div>}/>
+      <Route path='/siteCart' element={<div>Site Cart Page</div>}/>
+      <Route path='/equipmentsView' element={<div>Equipments View Page</div>}/>
+      <Route path='/equipmentsCreate' element={<div>Equipments Create Page</div>}/>
+      <Route path='/equipmentsIOT' element={<div>Equipments IOT Page</div>}/>
 
     </Routes>
   );

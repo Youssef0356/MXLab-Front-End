@@ -55,7 +55,6 @@ const UserCreate: React.FC = () => {
         dateCreation: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/'),
         privilege: formData.privilege,
         location: formData.location,
-        isActive: true
       };
 
       // In a real app, you would send this to an API
@@ -228,8 +227,6 @@ const UserCreate: React.FC = () => {
                   >
                     <option value="employee">Employé</option>
                     <option value="Superviseur">Superviseur</option>
-                    <option value="admin">Administrateur</option>
-                    <option value="manager">Manager</option>
                   </select>
                 </div>
 

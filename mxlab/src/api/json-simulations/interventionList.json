@@ -14,8 +14,7 @@
     "estimatedDuration": "4 heures",
     "assignedTeam": "Équipe Mécanique A",
     "tools": ["Clé dynamométrique", "Multimètre", "Analyseur de vibrations"],
-    "parts": ["Roulement moteur", "Joint d'étanchéité"],
-    "cost": "850 TND"
+    "parts": ["Roulement moteur", "Joint d'étanchéité"]
   },
   {
     "id": "INT002",
@@ -32,8 +31,7 @@
     "estimatedDuration": "2 heures",
     "assignedTeam": "Équipe Mécanique B",
     "tools": ["Clé à molette", "Pince"],
-    "parts": ["Courroie transporteuse 2m"],
-    "cost": "320 TND"
+    "parts": ["Courroie transporteuse 2m"]
   },
   {
     "id": "INT003",
@@ -50,7 +48,6 @@
     "estimatedDuration": "1 heure",
     "assignedTeam": "Équipe Hydraulique",
     "tools": ["Clé hydraulique", "Kit de joints"],
-    "parts": ["Joint d'étanchéité hydraulique"],
-    "cost": "150 TND"
+    "parts": ["Joint d'étanchéité hydraulique"]
   }
 ]

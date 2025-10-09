@@ -32,15 +32,14 @@ const Sidebar:React.FC = () => {
       '/interventionRequests': 'InterventionRequests',
       '/interventionCreate': 'InterventionCreate',
       '/interventionList': 'InterventionList',
-      '/user-view': 'UserView',
-      '/user-create': 'UserCreate',
-      '/user-list': 'UserList',
-      '/site-view': 'SiteView',
-      '/site-create': 'SiteCreate',
-      '/site-cart': 'SiteCart',
-      '/equipments-view': 'EquipementsView',
-      '/equipments-create': 'EquipementsCreate',
-      '/equipments-iot': 'EquipementsIOT',
+      '/userCreate': 'UserCreate',
+      '/userList': 'UserList',
+      '/siteView': 'SiteView',
+      '/siteCreate': 'SiteCreate',
+      '/siteCart': 'SiteCart',
+      '/equipmentsView': 'EquipementsView',
+      '/equipmentsCreate': 'EquipementsCreate',
+      '/equipmentsIOT': 'EquipementsIOT',
       '/maintenance-view': 'MaintainanceView',
       '/maintenance-type': 'MaintainanceType',
       '/calendar': 'Calendar',
@@ -53,6 +52,9 @@ const Sidebar:React.FC = () => {
     }
     if (pathname.startsWith('/interventionApproval/')) {
       return 'InterventionRequests'; // Approval page belongs to requests section
+    }
+    if (pathname.startsWith('/userView/')) {
+      return 'UserList'; // User view page belongs to user list section
     }
     
     return routeToItemMap[pathname] || 'Dashboard';
@@ -74,7 +76,6 @@ const Sidebar:React.FC = () => {
       'InterventionRequests': 'orders',
       'InterventionCreate': 'orders',
       'InterventionList': 'orders',
-      'UserView': 'users',
       'UserCreate': 'users',
       'UserList': 'users',
       'SiteView': 'surveillance',
@@ -112,15 +113,14 @@ const Sidebar:React.FC = () => {
       'InterventionRequests': '/interventionRequests',
       'InterventionCreate': '/interventionCreate',
       'InterventionList': '/interventionList',
-      'UserView': '/user-view',
-      'UserCreate': '/user-create',
-      'UserList': '/user-list',
-      'SiteView': '/site-view',
-      'SiteCreate': '/site-create',
-      'SiteCart': '/site-cart',
-      'EquipementsView': '/equipments-view',
-      'EquipementsCreate': '/equipments-create',
-      'EquipementsIOT': '/equipments-iot',
+      'UserCreate': '/userCreate',
+      'UserList': '/userList',
+      'SiteView': '/siteView',
+      'SiteCreate': '/siteCreate',
+      'SiteCart': '/siteCart',
+      'EquipementsView': '/equipmentsView',
+      'EquipementsCreate': '/equipmentsCreate',
+      'EquipementsIOT': '/equipmentsIOT',
       'MaintainanceView': '/maintenance-view',
       'MaintainanceType': '/maintenance-type',
       'Calendar': '/calendar',
@@ -173,7 +173,6 @@ const Sidebar:React.FC = () => {
       'InterventionRequests': 'orders',
       'InterventionCreate': 'orders',
       'InterventionList': 'orders',
-      'UserView': 'users',
       'UserCreate': 'users',
       'UserList': 'users',
       'SiteView': 'surveillance',
@@ -240,7 +239,6 @@ const Sidebar:React.FC = () => {
       label: 'Utilisateurs',
       icon: Users,
       subItems: [
-        { id: 'UserView', label: "Voir les utilisateurs" },
         { id: 'UserCreate', label: "Créer un utilisateur" },
         { id: 'UserList', label: "Liste des utilisateurs" },
       ]
