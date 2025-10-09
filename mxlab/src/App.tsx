@@ -12,6 +12,9 @@ import UserList from './Pages/MainPage/Utilisateur/UserList';
 import SiteList from './Pages/MainPage/Site/SiteList';
 import SiteCreate from './Pages/MainPage/Site/SiteCreate';
 import SitesView from './Pages/MainPage/Site/SitesView';
+import ListeEquipment from './Pages/MainPage/Equipments/ListeEquipment';
+import CreateEquipment from './Pages/MainPage/Equipments/CreateEquipment';
+import IOT from './Pages/MainPage/Equipments/iot';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -32,9 +35,9 @@ const App: React.FC = () => {
       <Route path='/siteView' element={<SiteList/>}/>
       <Route path='/siteCreate' element={<SiteCreate/>}/>
       <Route path='/siteCart' element={<SitesView/>}/>
-      <Route path='/equipmentsView' element={<div>Equipments View Page</div>}/>
-      <Route path='/equipmentsCreate' element={<div>Equipments Create Page</div>}/>
-      <Route path='/equipmentsIOT' element={<div>Equipments IOT Page</div>}/>
+      <Route path='/equipmentsView' element={<ListeEquipment/>}/>
+      <Route path='/equipmentsCreate' element={<CreateEquipment/>}/>
+      <Route path='/equipmentsIOT' element={<IOT/>}/>
 
     </Routes>
   );

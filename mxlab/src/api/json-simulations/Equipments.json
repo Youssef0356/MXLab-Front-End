@@ -1,0 +1,41 @@
+[
+  {
+    "id": "EQ-001",
+    "name": "Titre d'equipement",
+    "reference": "123456",
+    "location": "Site A",
+    "image": "/api/placeholder/300/200",
+    "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMTwvdGV4dD4KICA8L3N2Zz4K",
+    "videoUrl": "",
+    "datasheet": "",
+    "description": "Description de l'équipement A",
+    "status": "active",
+    "dateCreated": "2024/01/15"
+  },
+  {
+    "id": "EQ-002",
+    "name": "Titre d'equipement",
+    "reference": "123456",
+    "location": "Site B",
+    "image": "/api/placeholder/300/200",
+    "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMjwvdGV4dD4KICA8L3N2Zz4K",
+    "videoUrl": "",
+    "datasheet": "",
+    "description": "Description de l'équipement B",
+    "status": "maintenance",
+    "dateCreated": "2024/02/20"
+  },
+  {
+    "id": "EQ-003",
+    "name": "Titre d'equipement",
+    "reference": "123456",
+    "location": "Site C",
+    "image": "/api/placeholder/300/200",
+    "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMzwvdGV4dD4KICA8L3N2Zz4K",
+    "videoUrl": "",
+    "datasheet": "",
+    "description": "Description de l'équipement C",
+    "status": "active",
+    "dateCreated": "2024/03/10"
+  }
+]
