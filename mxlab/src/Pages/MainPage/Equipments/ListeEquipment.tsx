@@ -4,18 +4,37 @@ import Layout from "../../../Components/Common/Layout";
 import { Plus, QrCode, Search } from 'lucide-react';
 import equipmentsData from '../../../api/json-simulations/Equipments.json';
 
+interface Button {
+  name: string;
+  images: string;
+  modelPartName: string;
+}
+
+interface PartDescription {
+  key: string;
+  value: string;
+}
+
+interface Parts {
+  id: string;
+  description: PartDescription[];
+  video: string;
+  datasheetUrl: string;
+}
+
 interface EquipmentData {
   id: string;
   name: string;
   reference: string;
   location: string;
-  image: string;
+  Images: string;
   qrCode: string;
-  videoUrl?: string;
+  Videos?: string;
   datasheet?: string;
-  description: string;
-  status: string;
+  description: PartDescription[];
   dateCreated: string;
+  buttons?: Button[];
+  parts?: Parts[];
 }
 
 const ListeEquipment: React.FC = () => {
@@ -96,7 +115,7 @@ const ListeEquipment: React.FC = () => {
               <div className="mb-4">
                 <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
                   <img
-                    src="/api/placeholder/300/200"
+                    src={equipment.Images || "/api/placeholder/300/200"}
                     alt={equipment.name}
                     className="w-full h-full object-cover"
                   />
@@ -110,7 +129,13 @@ const ListeEquipment: React.FC = () => {
                 </h3>
                 <div className="text-sm text-gray-600">
                   <p><span className="font-medium">Référence:</span> {equipment.reference}</p>
-                  <p><span className="font-medium">{equipment.location}</span></p>
+                  <p><span className="font-medium">Localisation:</span> {equipment.location}</p>
+                  {equipment.parts && equipment.parts.length > 0 && (
+                    <p><span className="font-medium">Parties:</span> {equipment.parts.map(p => p.id).join(', ')}</p>
+                  )}
+                  {equipment.buttons && equipment.buttons.length > 0 && (
+                    <p><span className="font-medium">Fonction:</span> {equipment.buttons[0].name}</p>
+                  )}
                 </div>
               </div>
 
@@ -167,7 +192,7 @@ const ListeEquipment: React.FC = () => {
           <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
             <div className="text-center">
               <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                Titre d'équipement
+                {selectedEquipment.name}
               </h3>
               
               {/* QR Code Display */}

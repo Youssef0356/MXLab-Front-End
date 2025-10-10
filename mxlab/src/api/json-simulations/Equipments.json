@@ -1,41 +1,131 @@
 [
   {
     "id": "EQ-001",
-    "name": "Titre d'equipement",
+    "name": "Vanne De Regulation",
     "reference": "123456",
     "location": "Site A",
-    "image": "/api/placeholder/300/200",
+    "Images": "/api/placeholder/300/200",
     "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMTwvdGV4dD4KICA8L3N2Zz4K",
-    "videoUrl": "",
+    "Videos": "",
     "datasheet": "",
-    "description": "Description de l'équipement A",
-    "status": "active",
-    "dateCreated": "2024/01/15"
+    "description": [
+      { "key": "marque", "value": "SAMSON" },
+      { "key": "DN", "value": "25" },
+      { "key": "PN", "value": "16" },
+      { "key": "course", "value": "15mm" }
+    ],
+    "dateCreated": "2024/01/15",
+    "parts": 
+        [
+          {
+          "id": "Positionneur electropneumatique",
+          "description": [
+            { "key": "marque", "value": "SAM SON" },
+            { "key": "type", "value": "TROVIS 3730-3" }
+          ],
+          "video": "positionneur",
+          "datasheetUrl": "https://drive.google.com/file/d/1abc123",
+          "buttons": [
+            {
+              "name": "fonctionnement",
+              "images": "positionneur_fonctionnement.png"
+            },
+            {
+              "name": "maintenance",
+              "images": "positionneur_maintenance.png"
+            }
+          ]
+        },
+        {
+          "id": "Servomoteur pneumatique",
+          "description": [
+            { "key": "marque", "value": "SAM SON" },
+            { "key": "type", "value": "Type 3277" }
+          ],
+          "video": "servomoteur",
+          "datasheetUrl": "https://drive.google.com/file/d/1def456",
+          "buttons": [
+            {
+              "name": "schéma",
+              "images": "servomoteur_schema.png"
+            }
+          ]
+        }
+      ]  
   },
   {
     "id": "EQ-002",
-    "name": "Titre d'equipement",
-    "reference": "123456",
-    "location": "Site B",
-    "image": "/api/placeholder/300/200",
+    "name": "Pompe centrifuge",
+    "reference": "789012",
+    "Images": "/api/placeholder/300/200",
     "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMjwvdGV4dD4KICA8L3N2Zz4K",
-    "videoUrl": "",
+    "Videos": "",
     "datasheet": "",
-    "description": "Description de l'équipement B",
-    "status": "maintenance",
-    "dateCreated": "2024/02/20"
+    "description": [
+      { "key": "débit", "value": "50 m³/h" },
+      { "key": "hauteur", "value": "25 m" },
+      { "key": "puissance", "value": "15 kW" }
+    ],
+    "dateCreated": "2024/02/20",
+    "parts": [
+        {
+          "id": "Moteur électrique",
+          "description": [
+            { "key": "Type", "value": "Moteur asynchrone triphasé" },
+            { "key": "Puissance", "value": "15 kW, 1450 tr/min" },
+            { "key": "Application", "value": "Entraînement pompe centrifuge" }
+          ],
+          "video": "moteur",
+          "datasheetUrl": "https://drive.google.com/file/d/1ghi789",
+          "buttons": [
+            {
+              "name": "maintenance",
+              "images": "moteur_maintenance.png"
+            },
+            {
+              "name": "diagnostic",
+              "images": "moteur_diagnostic.png"
+            }
+          ]
+        }
+    ]
   },
   {
     "id": "EQ-003",
-    "name": "Titre d'equipement",
-    "reference": "123456",
-    "location": "Site C",
-    "image": "/api/placeholder/300/200",
+    "name": "Compresseur à vis",
+    "reference": "345678",
+    "Images": "/api/placeholder/300/200",
     "qrCode": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVRLTAwMzwvdGV4dD4KICA8L3N2Zz4K",
-    "videoUrl": "",
+    "Videos": "",
     "datasheet": "",
-    "description": "Description de l'équipement C",
-    "status": "active",
-    "dateCreated": "2024/03/10"
+    "description": [
+      { "key": "type", "value": "Compresseur à vis" },
+      { "key": "pression", "value": "10 bar" },
+      { "key": "débit", "value": "2.5 m³/min" },
+      { "key": "puissance", "value": "18.5 kW" }
+    ],
+    "dateCreated": "2024/03/10",
+    "parts": [
+        {
+          "id": "Réservoir d'air",
+          "description": [
+            { "key": "Type", "value": "Réservoir sous pression certifié" },
+            { "key": "Capacité", "value": "500 litres, 10 bar max" },
+            { "key": "Application", "value": "Stockage air comprimé industriel" }
+          ],
+          "video": "reservoir",
+          "datasheetUrl": "https://drive.google.com/file/d/1jkl012",
+          "buttons": [
+            {
+              "name": "inspection",
+              "images": "reservoir_inspection.png"
+            },
+            {
+              "name": "pression",
+              "images": "reservoir_pression.png"
+            }
+          ]
+        }
+    ]
   }
 ]
