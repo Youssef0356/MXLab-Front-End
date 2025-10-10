@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Layout from '../../Components/Common/Layout';
-import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3 } from 'lucide-react';
+import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3, Plus, Users, Map, Package, ClipboardList, ArrowRight } from 'lucide-react';
+import type { DashboardStats, KPICard, QuickAction } from '../../services';
+import { ROUTES } from '../../services';
 
 const Dashboard: React.FC = () => {
-  const [stats] = useState({
+  const navigate = useNavigate();
+  
+  const [stats] = useState<DashboardStats>({
     totalDemandes: 18,
     enAttente: 5,
     approuvees: 10,
@@ -12,7 +17,53 @@ const Dashboard: React.FC = () => {
     equipementsEnMaintenance: 2
   });
 
-  const kpiCards = [
+  // Quick action buttons data
+  const quickActions: QuickAction[] = [
+    {
+      title: 'Créer Intervention',
+      description: 'Nouvelle demande d\'intervention',
+      icon: Plus,
+      color: 'bg-blue-500 hover:bg-blue-600',
+      route: ROUTES.INTERVENTION_CREATE
+    },
+    {
+      title: 'Gérer Utilisateurs',
+      description: 'Ajouter ou modifier utilisateurs',
+      icon: Users,
+      color: 'bg-green-500 hover:bg-green-600',
+      route: ROUTES.USER_LIST
+    },
+    {
+      title: 'Surveillance Sites',
+      description: 'Voir tous les sites',
+      icon: Map,
+      color: 'bg-purple-500 hover:bg-purple-600',
+      route: ROUTES.SITE_VIEW
+    },
+    {
+      title: 'Équipements',
+      description: 'Gérer les équipements',
+      icon: Package,
+      color: 'bg-orange-500 hover:bg-orange-600',
+      route: ROUTES.EQUIPMENT_VIEW
+    },
+    {
+      title: 'Historique Maintenance',
+      description: 'Voir l\'historique complet',
+      icon: Wrench,
+      color: 'bg-indigo-500 hover:bg-indigo-600',
+      route: ROUTES.MAINTENANCE_HISTORY
+    },
+    {
+      title: 'Ordres d\'Intervention',
+      description: 'Liste des demandes',
+      icon: ClipboardList,
+      color: 'bg-red-500 hover:bg-red-600',
+      route: ROUTES.INTERVENTION_REQUESTS
+    }
+  ];
+
+  const kpiCards: KPICard[] = [
     { title: 'Total des demandes', value: stats.totalDemandes, icon: BarChart3, color: 'bg-blue-500', trend: '+12%' },
     { title: 'Demandes en attente', value: stats.enAttente, icon: Clock, color: 'bg-orange-500', trend: '+5%' },
     { title: 'Demandes approuvées', value: stats.approuvees, icon: CheckCircle, color: 'bg-green-500', trend: '+8%' },
@@ -47,6 +98,25 @@ const Dashboard: React.FC = () => {
                 <p className="text-3xl font-bold text-slate-800">{card.value}</p>
               </div>
             ))}
+          </div>
+
+          {/* Actions Rapides */}
+          <div>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">Actions Rapides</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {quickActions.slice(0, 4).map((action, index) => (
+                <button
+                  key={index}
+                  onClick={() => navigate(action.route)}
+                  className={`${action.color} text-white rounded-xl p-4 transition-all duration-200 hover:shadow-lg flex flex-col items-center gap-3 text-center`}
+                >
+                  <action.icon className="w-6 h-6" />
+                  <span className="text-sm font-medium">
+                    {action.title}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
     
           {/* Equipment Status */}

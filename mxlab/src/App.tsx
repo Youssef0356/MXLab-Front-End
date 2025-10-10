@@ -15,6 +15,10 @@ import SitesView from './Pages/MainPage/Site/SitesView';
 import ListeEquipment from './Pages/MainPage/Equipments/ListeEquipment';
 import CreateEquipment from './Pages/MainPage/Equipments/CreateEquipment';
 import IOT from './Pages/MainPage/Equipments/iot';
+import HistoriqueMaintenance from './Pages/MainPage/Maintenance/HistoriqueMaintenance';
+import PreventiveMaintenance from './Pages/MainPage/Maintenance/PreventiveMaintenance';
+import MaintenanceCalendar from './Pages/MainPage/Maintenance/MaintenanceCalendar';
+import Visualisations from './Pages/MainPage/Visualisations';
 
 import { Routes, Route } from 'react-router-dom';
 
@@ -38,6 +42,10 @@ const App: React.FC = () => {
       <Route path='/equipmentsView' element={<ListeEquipment/>}/>
       <Route path='/equipmentsCreate' element={<CreateEquipment/>}/>
       <Route path='/equipmentsIOT' element={<IOT/>}/>
+      <Route path='/maintenanceHistory' element={<HistoriqueMaintenance/>}/>
+      <Route path='/maintenance-view' element={<PreventiveMaintenance/>}/>
+      <Route path='/calendar' element={<MaintenanceCalendar/>}/>
+      <Route path='/visualisations' element={<Visualisations/>}/>
 
     </Routes>
   );

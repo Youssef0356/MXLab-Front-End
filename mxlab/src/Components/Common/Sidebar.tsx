@@ -28,7 +28,8 @@ const Sidebar:React.FC = () => {
   // Map routes back to menu item IDs
   const getItemIdForRoute = (pathname: string): string => {
     const routeToItemMap: Record<string, string> = {
-      '/dashboard': 'visualisations',
+      '/dashboard': 'DashboardMain',
+      '/visualisations': 'visualisations',
       '/interventionRequests': 'InterventionRequests',
       '/interventionCreate': 'InterventionCreate',
       '/interventionList': 'InterventionList',
@@ -41,7 +42,7 @@ const Sidebar:React.FC = () => {
       '/equipmentsCreate': 'EquipementsCreate',
       '/equipmentsIOT': 'EquipementsIOT',
       '/maintenance-view': 'MaintainanceView',
-      '/maintenance-type': 'MaintainanceType',
+      '/maintenanceHistory': 'MaintainanceType',
       '/calendar': 'Calendar',
       '/settings': 'settings'
     };
@@ -72,6 +73,7 @@ const Sidebar:React.FC = () => {
     
     // Keep parent menu expanded if the new active item is a sub-item
     const subItemToParentMap: Record<string, string> = {
+      'DashboardMain': 'Dashboard',
       'visualisations': 'Dashboard',
       'InterventionRequests': 'orders',
       'InterventionCreate': 'orders',
@@ -109,7 +111,8 @@ const Sidebar:React.FC = () => {
   const getRouteForItem = (itemId: string): string => {
     const routeMap: Record<string, string> = {
       'Dashboard': '/dashboard',
-      'visualisations': '/dashboard',
+      'DashboardMain': '/dashboard',
+      'visualisations': '/visualisations',
       'InterventionRequests': '/interventionRequests',
       'InterventionCreate': '/interventionCreate',
       'InterventionList': '/interventionList',
@@ -122,7 +125,7 @@ const Sidebar:React.FC = () => {
       'EquipementsCreate': '/equipmentsCreate',
       'EquipementsIOT': '/equipmentsIOT',
       'MaintainanceView': '/maintenance-view',
-      'MaintainanceType': '/maintenance-type',
+      'MaintainanceType': '/maintenanceHistory',
       'Calendar': '/calendar',
       'settings': '/settings'
     };
@@ -169,6 +172,7 @@ const Sidebar:React.FC = () => {
     
     // Map sub-items to their parent menus
     const subItemToParentMap: Record<string, string> = {
+      'DashboardMain': 'Dashboard',
       'visualisations': 'Dashboard',
       'InterventionRequests': 'orders',
       'InterventionCreate': 'orders',
@@ -221,6 +225,7 @@ const Sidebar:React.FC = () => {
       label: 'Tableau de bord',
       icon: LayoutDashboard,
       subItems: [
+        { id: 'DashboardMain', label: 'Tableau de bord' },
         { id: 'visualisations', label: 'Visualisations' }
       ]
     },
