@@ -1,5 +1,5 @@
 import React from 'react';
-import Dashboard from './Pages/MainPage/Dashboard';
+import Dashboard from './Pages/MainPage/Dashboard/Dashboard';
 import LoginPage from './Components/Forms/LoginPage';
 import InterventionCreate from './Pages/MainPage/Intervention/InterventionCreate';
 import InterventionRequests from './Pages/MainPage/Intervention/InterventionRequests';
@@ -18,7 +18,7 @@ import IOT from './Pages/MainPage/Equipments/iot';
 import HistoriqueMaintenance from './Pages/MainPage/Maintenance/HistoriqueMaintenance';
 import PreventiveMaintenance from './Pages/MainPage/Maintenance/PreventiveMaintenance';
 import MaintenanceCalendar from './Pages/MainPage/Maintenance/MaintenanceCalendar';
-import Visualisations from './Pages/MainPage/Visualisations';
+import Visualisations from './Pages/MainPage/Dashboard/Visualisations';
 
 import { Routes, Route } from 'react-router-dom';
 

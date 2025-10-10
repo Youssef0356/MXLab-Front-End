@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from "../../Components/Common/Layout";
+import Layout from "../../../Components/Common/Layout";
 import { BarChart3 } from 'lucide-react';
 
 const Visualisations: React.FC = () => {

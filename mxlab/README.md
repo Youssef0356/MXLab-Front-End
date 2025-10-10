@@ -105,8 +105,9 @@ src/
 │       └── Sidebar.tsx         # Navigation sidebar
 ├── Pages/
 │   └── MainPage/
-│       ├── Dashboard.tsx       # Main dashboard
-│       ├── Visualisations.tsx  # Data visualizations
+│       ├── Dashboard/          # Dashboard components
+│       │   ├── Dashboard.tsx   # Main dashboard
+│       │   └── Visualisations.tsx # Data visualizations
 │       ├── Equipments/         # Equipment management
 │       ├── Maintenance/        # Maintenance modules
 │       ├── Intervention/       # Intervention management
