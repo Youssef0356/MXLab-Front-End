@@ -17,7 +17,8 @@ interface PartDescription {
 interface Parts {
   id: string;
   description: PartDescription[];
-  video: string;
+  video: File | null;
+  image: File | null;
   datasheetUrl: string;
   buttons: Button[];
 }
@@ -51,7 +52,8 @@ const CreateEquipment: React.FC = () => {
     parts: [{
       id: '',
       description: [{ key: '', value: '' }],
-      video: '',
+      video: null,
+      image: null,
       datasheetUrl: '',
       buttons: [{ name: '', images: null }]
     }]
@@ -64,6 +66,8 @@ const CreateEquipment: React.FC = () => {
   const [buttonImagePreview, setButtonImagePreview] = useState<string | null>(null);
   const [qrCodePreview, setQrCodePreview] = useState<string | null>(null);
   const [generatedQrCode, setGeneratedQrCode] = useState<string | null>(null);
+  const [partImagePreviews, setPartImagePreviews] = useState<{ [key: number]: string | null }>({});
+  const [partVideoPreviews, setPartVideoPreviews] = useState<{ [key: number]: string | null }>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -187,6 +191,53 @@ const CreateEquipment: React.FC = () => {
     }
   };
 
+  // Part file upload handlers
+  const handlePartFileChange = (e: React.ChangeEvent<HTMLInputElement>, partIndex: number, fileType: 'image' | 'video') => {
+    const file = e.target.files?.[0] || null;
+    
+    // Update form data
+    setFormData(prev => ({
+      ...prev,
+      parts: prev.parts.map((part, i) =>
+        i === partIndex ? { ...part, [fileType]: file } : part
+      )
+    }));
+
+    // Create preview
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        
+        if (fileType === 'image') {
+          setPartImagePreviews(prev => ({
+            ...prev,
+            [partIndex]: result
+          }));
+        } else if (fileType === 'video') {
+          setPartVideoPreviews(prev => ({
+            ...prev,
+            [partIndex]: result
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // Clear preview if no file
+      if (fileType === 'image') {
+        setPartImagePreviews(prev => ({
+          ...prev,
+          [partIndex]: null
+        }));
+      } else if (fileType === 'video') {
+        setPartVideoPreviews(prev => ({
+          ...prev,
+          [partIndex]: null
+        }));
+      }
+    }
+  };
+
   const handleDescriptionChange = (index: number, field: keyof PartDescription, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -263,7 +314,8 @@ const CreateEquipment: React.FC = () => {
       parts: [...prev.parts, {
         id: `PART-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
         description: [{ key: '', value: '' }],
-        video: '',
+        video: null,
+        image: null,
         datasheetUrl: '',
         buttons: [{ name: '', images: null }]
       }]
@@ -357,7 +409,8 @@ const CreateEquipment: React.FC = () => {
         parts: [{
           id: '',
           description: [{ key: '', value: '' }],
-          video: '',
+          video: null,
+          image: null,
           datasheetUrl: '',
           buttons: [{ name: '', images: null }]
         }]
@@ -369,6 +422,8 @@ const CreateEquipment: React.FC = () => {
       setButtonImagePreview(null);
       setQrCodePreview(null);
       setGeneratedQrCode(null);
+      setPartImagePreviews({});
+      setPartVideoPreviews({});
 
       // Hide success message after 3 seconds
       setTimeout(() => setShowSuccess(false), 3000);
@@ -623,46 +678,6 @@ const CreateEquipment: React.FC = () => {
                       placeholder="Ajouter la localisation ici..."
                     />
                   </div>
-
-
-                  {/* Equipment Information */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Information de l'équipement
-                      <span className="text-xs text-gray-500 ml-2">(Descriptions techniques principales)</span>
-                    </label>
-
-                    <div className="space-y-3">
-                      {formData.description.map((desc, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col sm:flex-row sm:items-center gap-2"
-                        >
-                          <input
-                            type="text"
-                            value={desc.key}
-                            onChange={(e) =>
-                              handleDescriptionChange(index, "key", e.target.value)
-                            }
-                            className="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Clé (ex: marque)"
-                          />
-
-                          <input
-                            type="text"
-                            value={desc.value}
-                            onChange={(e) =>
-                              handleDescriptionChange(index, "value", e.target.value)
-                            }
-                            className="w-full sm:flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Valeur (ex: SAMSON)"
-                          />
-
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                 </div>
               </div>
             </div>
@@ -745,7 +760,7 @@ const CreateEquipment: React.FC = () => {
                               type="file"
                               id={`partImage-${partIndex}`}
                               accept="image/*"
-                              onChange={(e) => handleFileChange(e, 'image')}
+                              onChange={(e) => handlePartFileChange(e, partIndex, 'image')}
                               className="hidden"
                             />
 
@@ -753,13 +768,33 @@ const CreateEquipment: React.FC = () => {
                               onClick={() => document.getElementById(`partImage-${partIndex}`)?.click()}
                               className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors relative"
                             >
-                              <div className="flex items-center justify-center h-full">
-                                <div className="text-center">
-                                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                  <p className="text-sm text-gray-500">Télécharger une image</p>
-                                  <p className="text-xs text-gray-400 mt-1">Cliquez pour sélectionner</p>
+                              {partImagePreviews[partIndex] ? (
+                                <div className="relative w-full h-full">
+                                  <img
+                                    src={partImagePreviews[partIndex]!}
+                                    alt="Part Image Preview"
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handlePartFileChange({ target: { files: null } } as any, partIndex, 'image');
+                                    }}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 z-10"
+                                  >
+                                    ×
+                                  </button>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="flex items-center justify-center h-full">
+                                  <div className="text-center">
+                                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                    <p className="text-sm text-gray-500">Télécharger une image</p>
+                                    <p className="text-xs text-gray-400 mt-1">Cliquez pour sélectionner</p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -774,7 +809,7 @@ const CreateEquipment: React.FC = () => {
                               type="file"
                               id={`partVideo-${partIndex}`}
                               accept="video/*"
-                              onChange={(e) => handleFileChange(e, 'videoUrl')}
+                              onChange={(e) => handlePartFileChange(e, partIndex, 'video')}
                               className="hidden"
                             />
 
@@ -782,13 +817,33 @@ const CreateEquipment: React.FC = () => {
                               onClick={() => document.getElementById(`partVideo-${partIndex}`)?.click()}
                               className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors relative"
                             >
-                              <div className="flex items-center justify-center h-full">
-                                <div className="text-center">
-                                  <Video className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                                  <p className="text-sm text-gray-500">Télécharger une vidéo</p>
-                                  <p className="text-xs text-gray-400 mt-1">Cliquez pour sélectionner</p>
+                              {partVideoPreviews[partIndex] ? (
+                                <div className="relative w-full h-full">
+                                  <video
+                                    src={partVideoPreviews[partIndex]!}
+                                    className="w-full h-full object-cover rounded-lg"
+                                    controls
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handlePartFileChange({ target: { files: null } } as any, partIndex, 'video');
+                                    }}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 z-10"
+                                  >
+                                    ×
+                                  </button>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="flex items-center justify-center h-full">
+                                  <div className="text-center">
+                                    <Video className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                    <p className="text-sm text-gray-500">Télécharger une vidéo</p>
+                                    <p className="text-xs text-gray-400 mt-1">Cliquez pour sélectionner</p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
