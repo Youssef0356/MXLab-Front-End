@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../Components/Common/Layout';
 import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3, Plus, Users, Map, Package, ClipboardList, ArrowRight } from 'lucide-react';
-import type { DashboardStats, KPICard, QuickAction } from '../../services';
-import { ROUTES } from '../../services';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   
-  const [stats] = useState<DashboardStats>({
+  const [stats] = useState({
     totalDemandes: 18,
     enAttente: 5,
     approuvees: 10,
@@ -18,52 +16,52 @@ const Dashboard: React.FC = () => {
   });
 
   // Quick action buttons data
-  const quickActions: QuickAction[] = [
+  const quickActions = [
     {
       title: 'Créer Intervention',
       description: 'Nouvelle demande d\'intervention',
       icon: Plus,
       color: 'bg-blue-500 hover:bg-blue-600',
-      route: ROUTES.INTERVENTION_CREATE
+      route: '/interventionCreate'
     },
     {
       title: 'Gérer Utilisateurs',
       description: 'Ajouter ou modifier utilisateurs',
       icon: Users,
       color: 'bg-green-500 hover:bg-green-600',
-      route: ROUTES.USER_LIST
+      route: '/userList'
     },
     {
       title: 'Surveillance Sites',
       description: 'Voir tous les sites',
       icon: Map,
       color: 'bg-purple-500 hover:bg-purple-600',
-      route: ROUTES.SITE_VIEW
+      route: '/siteView'
     },
     {
       title: 'Équipements',
       description: 'Gérer les équipements',
       icon: Package,
       color: 'bg-orange-500 hover:bg-orange-600',
-      route: ROUTES.EQUIPMENT_VIEW
+      route: '/equipmentsView'
     },
     {
       title: 'Historique Maintenance',
       description: 'Voir l\'historique complet',
       icon: Wrench,
       color: 'bg-indigo-500 hover:bg-indigo-600',
-      route: ROUTES.MAINTENANCE_HISTORY
+      route: '/maintenanceHistory'
     },
     {
       title: 'Ordres d\'Intervention',
       description: 'Liste des demandes',
       icon: ClipboardList,
       color: 'bg-red-500 hover:bg-red-600',
-      route: ROUTES.INTERVENTION_REQUESTS
+      route: '/interventionRequests'
     }
   ];
 
-  const kpiCards: KPICard[] = [
+  const kpiCards = [
     { title: 'Total des demandes', value: stats.totalDemandes, icon: BarChart3, color: 'bg-blue-500', trend: '+12%' },
     { title: 'Demandes en attente', value: stats.enAttente, icon: Clock, color: 'bg-orange-500', trend: '+5%' },
     { title: 'Demandes approuvées', value: stats.approuvees, icon: CheckCircle, color: 'bg-green-500', trend: '+8%' },

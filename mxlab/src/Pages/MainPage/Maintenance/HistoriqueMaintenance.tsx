@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from "../../../Components/Common/Layout";
 import { Search, Filter, Calendar, User, Wrench, MapPin, GripVertical } from 'lucide-react';
-import type { MaintenanceRecord } from '../../../services';
-import { utils } from '../../../services';
+
+interface MaintenanceRecord {
+  id: string;
+  description: string;
+  equipement: string;
+  site: string;
+  dateDebut: string;
+  dateFin: string;
+  technicien: string;
+  status: 'completed' | 'in_progress' | 'planned';
+  type: 'preventive' | 'corrective' | 'emergency';
+}
 
 const HistoriqueMaintenance: React.FC = () => {
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
@@ -148,33 +158,31 @@ const HistoriqueMaintenance: React.FC = () => {
   }, [isResizing, startX, startWidth]);
 
   const getStatusBadge = (status: string) => {
-    const statusLabels = {
-      completed: 'Terminé',
-      in_progress: 'En cours',
-      planned: 'Planifié'
+    const statusConfig = {
+      completed: { color: 'bg-green-100 text-green-800', text: 'Terminé' },
+      in_progress: { color: 'bg-blue-100 text-blue-800', text: 'En cours' },
+      planned: { color: 'bg-yellow-100 text-yellow-800', text: 'Planifié' }
     };
-    const label = statusLabels[status as keyof typeof statusLabels] || status;
-    const colorClass = utils.ui.getStatusColor(status);
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.planned;
     
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
-        {label}
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+        {config.text}
       </span>
     );
   };
 
   const getTypeBadge = (type: string) => {
-    const typeLabels = {
-      preventive: 'Préventive',
-      corrective: 'Corrective',
-      emergency: 'Urgence'
+    const typeConfig = {
+      preventive: { color: 'bg-blue-100 text-blue-800', text: 'Préventive' },
+      corrective: { color: 'bg-orange-100 text-orange-800', text: 'Corrective' },
+      emergency: { color: 'bg-red-100 text-red-800', text: 'Urgence' }
     };
-    const label = typeLabels[type as keyof typeof typeLabels] || type;
-    const colorClass = utils.ui.getInterventionTypeColor(type);
+    const config = typeConfig[type as keyof typeof typeConfig] || typeConfig.corrective;
     
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
-        {label}
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+        {config.text}
       </span>
     );
   };

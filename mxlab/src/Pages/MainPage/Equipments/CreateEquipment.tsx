@@ -3,8 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../../Components/Common/Layout";
 import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download } from 'lucide-react';
 import QRCode from 'qrcode';
-import type { EquipmentFormData, Parts, PartDescription, PartButton } from '../../../services';
-import { utils, VALIDATION_RULES, ROUTES } from '../../../services';
+
+interface Button {
+  name: string;
+  images: File | null;
+}
+
+interface PartDescription {
+  key: string;
+  value: string;
+}
+
+interface Parts {
+  id: string;
+  description: PartDescription[];
+  video: File | null;
+  image: File | null;
+  datasheetUrl: string;
+  buttons: Button[];
+}
+
+interface EquipmentFormData {
+  name: string;
+  reference: string;
+  location: string;
+  image: File | null;
+  qrCode: File | null;
+  qrCodeName: string;
+  videoUrl: File | null;
+  datasheet: File | null;
+  description: PartDescription[];
+  parts: Parts[];
+}
 
 const CreateEquipment: React.FC = () => {
   const navigate = useNavigate();
@@ -48,7 +78,7 @@ const CreateEquipment: React.FC = () => {
   };
 
   // Part button handlers
-  const handlePartButtonChange = (partIndex: number, buttonIndex: number, field: keyof PartButton, value: string) => {
+  const handlePartButtonChange = (partIndex: number, buttonIndex: number, field: keyof Button, value: string) => {
     setFormData(prev => ({
       ...prev,
       parts: prev.parts.map((part, i) =>

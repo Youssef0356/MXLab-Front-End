@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../../Components/Common/Layout";
 import { MapPin, Plus, Search, Building, Calendar, User } from 'lucide-react';
 import sitesData from '../../../api/json-simulations/Sites.json';
-import { utils, ROUTES } from '../../../services';
 
-// Local interface matching the JSON data structure
 interface SiteData {
   id: string;
   name: string;
