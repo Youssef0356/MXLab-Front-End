@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Layout from '../../../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { ChevronDown } from 'lucide-react';
 // Types for form data
 type InterventionFormData = {

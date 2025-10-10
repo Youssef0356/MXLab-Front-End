@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { Plus, QrCode, Search } from 'lucide-react';
-import equipmentsData from '../../../api/json-simulations/Equipments.json';
+import equipmentsData from '../../api/json-simulations/Equipments.json';
 
 interface Button {
   name: string;

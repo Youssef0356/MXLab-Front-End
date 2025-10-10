@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { Search, Eye, RotateCcw, Printer, Clock } from 'lucide-react';
-import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
-import usersData from '../../../api/json-simulations/users.json';
+import interventionRequestsData from '../../api/json-simulations/interventionRequests.json';
+import usersData from '../../api/json-simulations/users.json';
 // Infer types from JSON data
 type BaseInterventionRequest = typeof interventionRequestsData[0];
 type InterventionRequest = BaseInterventionRequest & {

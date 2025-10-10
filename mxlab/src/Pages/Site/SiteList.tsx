@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { MapPin, Plus, Search, Building, Calendar, User } from 'lucide-react';
-import sitesData from '../../../api/json-simulations/Sites.json';
+import sitesData from '../../api/json-simulations/Sites.json';
 
 interface SiteData {
   id: string;

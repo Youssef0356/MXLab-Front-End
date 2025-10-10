@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { User, Mail, Phone, MapPin, Shield, Calendar, Save, X, ArrowLeft } from 'lucide-react';
-import usersData from '../../../api/json-simulations/users.json';
+import usersData from '../../api/json-simulations/users.json';
 
 interface UserFormData {
   name: string;

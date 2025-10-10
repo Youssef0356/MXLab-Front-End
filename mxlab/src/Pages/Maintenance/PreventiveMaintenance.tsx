@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import {Settings} from 'lucide-react';
 
 const PreventiveMaintenance: React.FC = () => {

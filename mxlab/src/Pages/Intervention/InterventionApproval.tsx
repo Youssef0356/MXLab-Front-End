@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import Layout from '../../../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { ChevronDown, Upload, X } from 'lucide-react';
-import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
-import usersData from '../../../api/json-simulations/users.json';
+import interventionRequestsData from '../../api/json-simulations/interventionRequests.json';
+import usersData from '../../api/json-simulations/users.json';
 
 // Types for form data
 type InterventionFormData = {

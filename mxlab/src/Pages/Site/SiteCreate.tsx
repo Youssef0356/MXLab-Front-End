@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { Building, MapPin, Users, Save, X, ArrowLeft, Calendar } from 'lucide-react';
 
 interface SiteFormData {

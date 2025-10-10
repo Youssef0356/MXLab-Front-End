@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Layout from '../../../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { ArrowLeft, Printer, CheckCircle, XCircle, FileText, Video, Image } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import interventionRequestsData from '../../../api/json-simulations/interventionRequests.json';
-import usersData from '../../../api/json-simulations/users.json';
+import interventionRequestsData from '../../api/json-simulations/interventionRequests.json';
+import usersData from '../../api/json-simulations/users.json';
 
 // Infer types from JSON data
 type BaseInterventionRequest = typeof interventionRequestsData[0];

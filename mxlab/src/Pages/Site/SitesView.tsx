@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { Building, ArrowLeft, Plus } from 'lucide-react';
-import sitesData from '../../../api/json-simulations/Sites.json';
+import sitesData from '../../api/json-simulations/Sites.json';
 
 const SitesView: React.FC = () => {
   const navigate = useNavigate();

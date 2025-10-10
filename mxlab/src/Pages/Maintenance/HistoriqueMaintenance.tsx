@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { Search, Filter, Calendar, User, Wrench, MapPin, GripVertical } from 'lucide-react';
 
 interface MaintenanceRecord {

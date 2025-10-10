@@ -1,8 +1,8 @@
 import React from 'react';
-import Layout from "../../../Components/Common/Layout";
-import { Settings} from 'lucide-react';
+import Layout from "../../Components/Common/Layout";
+import { Settings } from 'lucide-react';
 
-const MaintenanceCalendar: React.FC = () => {
+const IOT: React.FC = () => {
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -16,7 +16,7 @@ const MaintenanceCalendar: React.FC = () => {
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-md mx-auto">
-            La page Calendrier est en cours de développement. Elle sera disponible très prochainement.
+            La page IoT est en cours de développement. Elle sera disponible très prochainement.
           </p>
           
           
@@ -26,4 +26,4 @@ const MaintenanceCalendar: React.FC = () => {
   );
 };
 
-export default MaintenanceCalendar;
+export default IOT;

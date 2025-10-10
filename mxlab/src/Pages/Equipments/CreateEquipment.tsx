@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from "../../../Components/Common/Layout";
+import Layout from "../../Components/Common/Layout";
 import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download } from 'lucide-react';
 import QRCode from 'qrcode';
 

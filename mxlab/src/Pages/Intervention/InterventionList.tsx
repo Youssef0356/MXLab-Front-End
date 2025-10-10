@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Layout from '../../../Components/Common/Layout';
+import Layout from '../../Components/Common/Layout';
 import { Search, Eye, RotateCcw, Printer } from 'lucide-react';
-import interventionListData from '../../../api/json-simulations/interventionList.json';
+import interventionListData from '../../api/json-simulations/interventionList.json';
 
 // Infer types from JSON data
 type InterventionRequest = typeof interventionListData[0];
