@@ -61,9 +61,6 @@ const CreateEquipment: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [videoPreview, setVideoPreview] = useState<string | null>(null);
-  const [buttonImagePreview, setButtonImagePreview] = useState<string | null>(null);
   const [qrCodePreview, setQrCodePreview] = useState<string | null>(null);
   const [generatedQrCode, setGeneratedQrCode] = useState<string | null>(null);
   const [partImagePreviews, setPartImagePreviews] = useState<{ [key: number]: string | null }>({});
@@ -238,29 +235,6 @@ const CreateEquipment: React.FC = () => {
     }
   };
 
-  const handleDescriptionChange = (index: number, field: keyof PartDescription, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      description: prev.description.map((desc, i) =>
-        i === index ? { ...desc, [field]: value } : desc
-      )
-    }));
-  };
-
-  const addDescription = () => {
-    setFormData(prev => ({
-      ...prev,
-      description: [...prev.description, { key: '', value: '' }]
-    }));
-  };
-
-  const removeDescription = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      description: prev.description.filter((_, i) => i !== index)
-    }));
-  };
-
   const handlePartChange = (partIndex: number, field: keyof Parts, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -336,42 +310,20 @@ const CreateEquipment: React.FC = () => {
       [fieldName]: file
     }));
 
-    // Create preview for images and videos
+    // Create preview for QR code only
     if (file) {
-      if (fieldName === 'image' && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const result = event.target?.result as string;
-          console.log('Image preview created:', result.substring(0, 50) + '...');
-          setImagePreview(result);
-        };
-        reader.onerror = (error) => {
-          console.error('Error reading image file:', error);
-        };
-        reader.readAsDataURL(file);
-      } else if (fieldName === 'qrCode' && file.type.startsWith('image/')) {
+      if (fieldName === 'qrCode' && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (event) => {
           const result = event.target?.result as string;
           setQrCodePreview(result);
         };
         reader.readAsDataURL(file);
-      } else if (fieldName === 'videoUrl' && file.type.startsWith('video/')) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const result = event.target?.result as string;
-          setVideoPreview(result);
-        };
-        reader.readAsDataURL(file);
       }
     } else {
       // Clear previews if no file selected
-      if (fieldName === 'image') {
-        setImagePreview(null);
-      } else if (fieldName === 'qrCode') {
+      if (fieldName === 'qrCode') {
         setQrCodePreview(null);
-      } else if (fieldName === 'videoUrl') {
-        setVideoPreview(null);
       }
     }
   };
@@ -417,9 +369,6 @@ const CreateEquipment: React.FC = () => {
       });
 
       // Clear previews
-      setImagePreview(null);
-      setVideoPreview(null);
-      setButtonImagePreview(null);
       setQrCodePreview(null);
       setGeneratedQrCode(null);
       setPartImagePreviews({});

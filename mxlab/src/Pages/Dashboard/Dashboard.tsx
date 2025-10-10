@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../Components/Common/Layout';
-import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3, Plus, Users, Map, Package, ClipboardList, ArrowRight } from 'lucide-react';
+import { TrendingUp, CheckCircle, Clock, Wrench, BarChart3, Plus, Users, Map, Package, ClipboardList } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
