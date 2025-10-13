@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../Components/Common/Layout";
-import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download } from 'lucide-react';
+import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download, X } from 'lucide-react';
 import QRCode from 'qrcode';
 import { useForm, useFieldArray } from 'react-hook-form';
 import type { EquipmentFormData } from '../../services/interfaces';
@@ -52,6 +52,10 @@ const CreateEquipment: React.FC = () => {
   const [generatedQrCode, setGeneratedQrCode] = useState<string | null>(null);
   const [partImagePreviews, setPartImagePreviews] = useState<{ [key: number]: string | null }>({});
   const [partVideoPreviews, setPartVideoPreviews] = useState<{ [key: number]: string | null }>({});
+  const [showHint, setShowHint] = useState<boolean>(() => {
+    // Check if hint has been shown in this session
+    return !sessionStorage.getItem('equipmentHintShown');
+  });
 
   // Watch form values for QR code generation
   const watchedName = watch('name');
@@ -304,6 +308,12 @@ const CreateEquipment: React.FC = () => {
     navigate('/equipmentsView');
   };
 
+  const handleCloseHint = () => {
+    setShowHint(false);
+    // Mark hint as shown in session storage
+    sessionStorage.setItem('equipmentHintShown', 'true');
+  };
+
   return (
     <Layout>
       <div className="p-6 max-w-4xl mx-auto">
@@ -317,12 +327,22 @@ const CreateEquipment: React.FC = () => {
         </div>
 
         {/* Introduction Hero Section */}
-        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Info className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
+        {showHint && (
+          <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 relative">
+            {/* Close Button */}
+            <button
+              onClick={handleCloseHint}
+              className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 hover:bg-white/50 rounded-full transition-colors"
+              title="Fermer cette aide"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="flex items-start gap-4 pr-8">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Info className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
                 Création d'équipement pour l'application AR
               </h2>
@@ -351,9 +371,10 @@ const CreateEquipment: React.FC = () => {
               </div>
 
               
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Success Message */}
         {showSuccess && (

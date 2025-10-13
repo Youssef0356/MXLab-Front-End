@@ -1,4 +1,3 @@
-// Equipment related interfaces
 
 export interface Button {
   name: string;

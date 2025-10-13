@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Layout from "../../Components/Common/Layout";
 import { Building, MapPin, Users, Save, X, ArrowLeft, Calendar } from 'lucide-react';
 import type { SiteFormData } from '../../services/interfaces';
+import sitesData from '../../api/json-simulations/Sites.json';
 
 const SiteCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = !!id;
 
   // React Hook Form setup
   const {
@@ -14,43 +17,70 @@ const SiteCreate: React.FC = () => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting }
-  } = useForm<SiteFormData>({
-    defaultValues: {
-      name: '',
-      location: '',
-      address: '',
-      manager: '',
-      status: 'bon etat'
-    }
-  });
+  } = useForm<SiteFormData>();
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [currentSite, setCurrentSite] = useState<any>(null);
+
+  // Load site data when in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      const site = sitesData.find(s => s.id === id);
+      if (site) {
+        setCurrentSite(site);
+        // Reset form with site data
+        reset({
+          name: site.name,
+          location: site.location,
+          address: site.address,
+          manager: site.manager,
+          status: site.status as 'bon etat' | 'en panne' | 'en cours de maintenance'
+        });
+      }
+    } else {
+      // Reset form with default values for create mode
+      reset({
+        name: '',
+        location: '',
+        address: '',
+        manager: '',
+        status: 'bon etat'
+      });
+    }
+  }, [id, isEditMode, reset]);
 
   // This function is no longer needed as React Hook Form handles input changes automatically
 
   const onSubmit = async (data: SiteFormData) => {
     try {
-      // Create new site object
-      const newSite = {
-        id: `SITE-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-        ...data,
-        dateCreated: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/')
-      };
+      if (isEditMode) {
+        // Update existing site
+        const updatedSite = {
+          ...currentSite,
+          ...data
+        };
+        console.log('Site updated:', updatedSite);
+      } else {
+        // Create new site object
+        const newSite = {
+          id: `SITE-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+          ...data,
+          dateCreated: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/')
+        };
+        console.log('New site created:', newSite);
+      }
 
-      // In a real app, you would send this to an API
-      console.log('New site created:', newSite);
-      
       // Show success message
       setShowSuccess(true);
       
-      // Reset form
-      reset();
-
-      // Hide success message after 3 seconds
-      setTimeout(() => setShowSuccess(false), 3000);
+      // Hide success message after 3 seconds and navigate back
+      setTimeout(() => {
+        setShowSuccess(false);
+        navigate('/siteView');
+      }, 2000);
 
     } catch (error) {
-      console.error('Error creating site:', error);
+      console.error('Error saving site:', error);
     }
   };
 
@@ -76,10 +106,13 @@ const SiteCreate: React.FC = () => {
           </button>
           
           <h1 className="text-3xl font-bold text-slate-800 mb-2">
-            Création d'un nouveau site
+            {isEditMode ? 'Modifier le site' : 'Création d\'un nouveau site'}
           </h1>
           <p className="text-slate-600">
-            Remplissez le formulaire ci-dessous pour ajouter un nouveau site de production.
+            {isEditMode 
+              ? 'Modifiez les informations du site ci-dessous.' 
+              : 'Remplissez le formulaire ci-dessous pour ajouter un nouveau site de production.'
+            }
           </p>
         </div>
 
@@ -90,7 +123,9 @@ const SiteCreate: React.FC = () => {
               <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">✓</span>
               </div>
-              <span className="font-medium">Site créé avec succès!</span>
+              <span className="font-medium">
+                {isEditMode ? 'Site modifié avec succès!' : 'Site créé avec succès!'}
+              </span>
             </div>
           </div>
         )}
@@ -214,7 +249,10 @@ const SiteCreate: React.FC = () => {
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Save className="w-4 h-4" />
-                {isSubmitting ? 'Création en cours...' : 'Créer le site'}
+                {isSubmitting 
+                  ? (isEditMode ? 'Modification en cours...' : 'Création en cours...') 
+                  : (isEditMode ? 'Modifier le site' : 'Créer le site')
+                }
               </button>
               
               <button
@@ -236,8 +274,10 @@ const SiteCreate: React.FC = () => {
             <div className="text-sm text-blue-800">
               <p className="font-medium mb-1">Note:</p>
               <p>
-                L'ID du site sera généré automatiquement et la date de création sera définie à aujourd'hui. 
-                Le nouveau site sera activé par défaut.
+                {isEditMode 
+                  ? 'Les modifications seront sauvegardées et appliquées immédiatement au site.' 
+                  : 'L\'ID du site sera généré automatiquement et la date de création sera définie à aujourd\'hui. Le nouveau site sera activé par défaut.'
+                }
               </p>
             </div>
           </div>

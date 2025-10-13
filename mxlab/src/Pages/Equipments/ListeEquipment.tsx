@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from "../../Components/Common/Layout";
-import { Plus, QrCode, Search } from 'lucide-react';
+import { Plus, QrCode, Search, X } from 'lucide-react';
 import equipmentsData from '../../api/json-simulations/Equipments.json';
 
 interface Button {
@@ -43,6 +43,7 @@ const ListeEquipment: React.FC = () => {
   const [equipments] = useState<EquipmentData[]>(equipmentsData as EquipmentData[]);
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentData | null>(null);
+  const [isModalAnimating, setIsModalAnimating] = useState(false);
 
   // Filter equipments based on search term
   const filteredEquipments = equipments.filter(equipment =>
@@ -57,12 +58,20 @@ const ListeEquipment: React.FC = () => {
 
   const handleShowQR = (equipment: EquipmentData) => {
     setSelectedEquipment(equipment);
+    setIsModalAnimating(true);
     setShowQRModal(true);
+    // Add slight delay for smooth animation
+    setTimeout(() => setIsModalAnimating(false), 100);
   };
 
   const closeQRModal = () => {
-    setShowQRModal(false);
-    setSelectedEquipment(null);
+    setIsModalAnimating(true);
+    // Add animation delay before closing
+    setTimeout(() => {
+      setShowQRModal(false);
+      setSelectedEquipment(null);
+      setIsModalAnimating(false);
+    }, 200);
   };
 
   return (
@@ -188,8 +197,26 @@ const ListeEquipment: React.FC = () => {
 
       {/* QR Code Modal */}
       {showQRModal && selectedEquipment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+        <div 
+          className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300 ${
+            isModalAnimating ? 'opacity-0' : 'opacity-100'
+          }`}
+          onClick={closeQRModal}
+        >
+          <div 
+            className={`relative bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ${
+              isModalAnimating ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeQRModal}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
             <div className="text-center">
               <h3 className="text-xl font-semibold text-gray-900 mb-6">
                 {selectedEquipment.name}
@@ -197,14 +224,25 @@ const ListeEquipment: React.FC = () => {
               
               {/* QR Code Display */}
               <div className="mb-6">
-                <div className="w-64 h-64 mx-auto bg-white border-4 border-blue-500 rounded-lg p-4 flex items-center justify-center">
+                <div className="w-64 h-64 mx-auto bg-white border-2 border-gray-300 rounded-lg p-4 flex items-center justify-center shadow-inner">
                   {/* QR Code Placeholder - In real app, you'd generate actual QR codes */}
-                  <div className="w-full h-full bg-black" style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23000'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%23fff'/%3E%3Crect x='30' y='10' width='10' height='10' fill='%23fff'/%3E%3Crect x='50' y='10' width='10' height='10' fill='%23fff'/%3E%3Crect x='70' y='10' width='10' height='10' fill='%23fff'/%3E%3Crect x='10' y='30' width='10' height='10' fill='%23fff'/%3E%3Crect x='30' y='30' width='10' height='10' fill='%23fff'/%3E%3Crect x='50' y='30' width='10' height='10' fill='%23fff'/%3E%3Crect x='70' y='30' width='10' height='10' fill='%23fff'/%3E%3C/svg%3E")`,
-                    backgroundSize: 'cover'
-                  }}>
+                  <div className="w-full h-full bg-white flex items-center justify-center">
+                    <div className="grid grid-cols-8 gap-1 w-full h-full">
+                      {/* Generate a simple QR-like pattern */}
+                      {Array.from({ length: 64 }, (_, i) => (
+                        <div
+                          key={i}
+                          className={`aspect-square ${
+                            Math.random() > 0.5 ? 'bg-black' : 'bg-white'
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Scannez ce code QR pour accéder aux informations de l'équipement
+                </p>
               </div>
 
               {/* Equipment Info in Modal */}
@@ -216,7 +254,7 @@ const ListeEquipment: React.FC = () => {
               {/* Close Button */}
               <button
                 onClick={closeQRModal}
-                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Fermer
               </button>

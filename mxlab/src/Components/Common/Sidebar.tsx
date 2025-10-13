@@ -57,6 +57,12 @@ const Sidebar:React.FC = () => {
     if (pathname.startsWith('/userView/')) {
       return 'UserList'; // User view page belongs to user list section
     }
+    if (pathname.startsWith('/userCreate/')) {
+      return 'UserCreate'; // User edit page belongs to user create section
+    }
+    if (pathname.startsWith('/siteCreate/')) {
+      return 'SiteCreate'; // Site edit page belongs to site create section
+    }
     
     return routeToItemMap[pathname] || 'Dashboard';
   };
