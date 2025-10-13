@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import Layout from "../../Components/Common/Layout";
 import { Building, MapPin, Users, Save, X, ArrowLeft, Calendar } from 'lucide-react';
 
@@ -14,34 +15,32 @@ interface SiteFormData {
 const SiteCreate: React.FC = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<SiteFormData>({
-    name: '',
-    location: '',
-    address: '',
-    manager: '',
-    status: 'bon etat'
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting }
+  } = useForm<SiteFormData>({
+    defaultValues: {
+      name: '',
+      location: '',
+      address: '',
+      manager: '',
+      status: 'bon etat'
+    }
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // This function is no longer needed as React Hook Form handles input changes automatically
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const onSubmit = async (data: SiteFormData) => {
     try {
       // Create new site object
       const newSite = {
         id: `SITE-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-        ...formData,
+        ...data,
         dateCreated: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/')
       };
 
@@ -52,32 +51,18 @@ const SiteCreate: React.FC = () => {
       setShowSuccess(true);
       
       // Reset form
-      setFormData({
-        name: '',
-        location: '',
-        address: '',
-        manager: '',
-        status: 'bon etat'
-      });
+      reset();
 
       // Hide success message after 3 seconds
       setTimeout(() => setShowSuccess(false), 3000);
 
     } catch (error) {
       console.error('Error creating site:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setFormData({
-      name: '',
-      location: '',
-      address: '',
-      manager: '',
-      status: 'bon etat'
-    });
+    reset();
   };
 
   const handleBack = () => {
@@ -119,7 +104,7 @@ const SiteCreate: React.FC = () => {
 
         {/* Form */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Site Information Section */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -134,15 +119,15 @@ const SiteCreate: React.FC = () => {
                     Nom du site *
                   </label>
                   <input
+                    {...register('name', { required: 'Le nom du site est requis' })}
                     type="text"
                     id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Site de Production A"
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  )}
                 </div>
 
                 {/* Location */}
@@ -152,15 +137,15 @@ const SiteCreate: React.FC = () => {
                     Localisation *
                   </label>
                   <input
+                    {...register('location', { required: 'La localisation est requise' })}
                     type="text"
                     id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Tunis, Tunisie"
                   />
+                  {errors.location && (
+                    <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                  )}
                 </div>
 
                 {/* Address */}
@@ -169,15 +154,15 @@ const SiteCreate: React.FC = () => {
                     Adresse complète *
                   </label>
                   <input
+                    {...register('address', { required: 'L\'adresse est requise' })}
                     type="text"
                     id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Zone Industrielle, Tunis 1000"
                   />
+                  {errors.address && (
+                    <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -196,15 +181,15 @@ const SiteCreate: React.FC = () => {
                     Responsable du site *
                   </label>
                   <input
+                    {...register('manager', { required: 'Le responsable du site est requis' })}
                     type="text"
                     id="manager"
-                    name="manager"
-                    value={formData.manager}
-                    onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ahmed Ben Ali"
                   />
+                  {errors.manager && (
+                    <p className="text-red-500 text-sm mt-1">{errors.manager.message}</p>
+                  )}
                 </div>
 
                 {/* Status */}
@@ -213,17 +198,17 @@ const SiteCreate: React.FC = () => {
                     Statut du site *
                   </label>
                   <select
+                    {...register('status', { required: 'Le statut est requis' })}
                     id="status"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="bon etat">Bon état</option>
                     <option value="en cours de maintenance">En cours de maintenance</option>
                     <option value="en panne">En panne</option>
                   </select>
+                  {errors.status && (
+                    <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                  )}
                 </div>
               </div>
             </div>

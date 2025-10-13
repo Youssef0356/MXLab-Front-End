@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../Components/Common/Layout";
 import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download } from 'lucide-react';
 import QRCode from 'qrcode';
-
+import { useForm, useFieldArray } from 'react-hook-form';
 interface Button {
   name: string;
   images: File | null;
@@ -39,107 +39,103 @@ interface EquipmentFormData {
 const CreateEquipment: React.FC = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<EquipmentFormData>({
-    name: '',
-    reference: '',
-    location: '',
-    image: null,
-    qrCode: null,
-    qrCodeName: '',
-    videoUrl: null,
-    datasheet: null,
-    description: [{ key: '', value: '' }],
-    parts: [{
-      id: '',
-      description: [{ key: '', value: '' }],
-      video: null,
+  // React Hook Form setup
+  const { 
+    register, 
+    handleSubmit, 
+    control, 
+    watch, 
+    setValue, 
+    getValues,
+    formState: { errors, isSubmitting } 
+  } = useForm<EquipmentFormData>({
+    defaultValues: {
+      name: '',
+      reference: '',
+      location: '',
       image: null,
-      datasheetUrl: '',
-      buttons: [{ name: '', images: null }]
-    }]
+      qrCode: null,
+      qrCodeName: '',
+      videoUrl: null,
+      datasheet: null,
+      description: [{ key: '', value: '' }],
+      parts: [{
+        id: '',
+        description: [{ key: '', value: '' }],
+        video: null,
+        image: null,
+        datasheetUrl: '',
+        buttons: [{ name: '', images: null }]
+      }]
+    }
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Field arrays for dynamic sections
+  const { fields: partsFields, append: appendPart, remove: removePartFromArray } = useFieldArray({
+    control,
+    name: "parts"
+  });
+
+  // UI state (keep these as useState since they're not form data)
   const [showSuccess, setShowSuccess] = useState(false);
   const [qrCodePreview, setQrCodePreview] = useState<string | null>(null);
   const [generatedQrCode, setGeneratedQrCode] = useState<string | null>(null);
   const [partImagePreviews, setPartImagePreviews] = useState<{ [key: number]: string | null }>({});
   const [partVideoPreviews, setPartVideoPreviews] = useState<{ [key: number]: string | null }>({});
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // Watch form values for QR code generation
+  const watchedName = watch('name');
+  const watchedReference = watch('reference');
 
-  // Part button handlers
-  const handlePartButtonChange = (partIndex: number, buttonIndex: number, field: keyof Button, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          buttons: part.buttons.map((button, j) =>
-            j === buttonIndex ? { ...button, [field]: value } : button
-          )
-        } : part
-      )
-    }));
-  };
-
+  // Part button handlers using React Hook Form
   const handlePartButtonImageChange = (partIndex: number, buttonIndex: number, file: File | null) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          buttons: part.buttons.map((button, j) =>
-            j === buttonIndex ? { ...button, images: file } : button
-          )
-        } : part
-      )
-    }));
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? {
+        ...part,
+        buttons: part.buttons.map((button, j) =>
+          j === buttonIndex ? { ...button, images: file } : button
+        )
+      } : part
+    );
+    setValue('parts', updatedParts);
   };
 
   const addPartButton = (partIndex: number) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          buttons: [...part.buttons, { name: '', images: null }]
-        } : part
-      )
-    }));
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? {
+        ...part,
+        buttons: [...part.buttons, { name: '', images: null }]
+      } : part
+    );
+    setValue('parts', updatedParts);
   };
 
   const removePartButton = (partIndex: number, buttonIndex: number) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          buttons: part.buttons.filter((_, j) => j !== buttonIndex)
-        } : part
-      )
-    }));
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? {
+        ...part,
+        buttons: part.buttons.filter((_, j) => j !== buttonIndex)
+      } : part
+    );
+    setValue('parts', updatedParts);
   };
 
   // QR Code generation functions
   const generateQRCode = async () => {
     try {
-      if (!formData.name || !formData.reference) {
+      if (!watchedName || !watchedReference) {
         alert('Veuillez remplir le nom et la référence de l\'équipement avant de générer le QR code.');
         return;
       }
 
       // Create QR code data with equipment info
       const qrData = JSON.stringify({
-        name: formData.name,
-        reference: formData.reference,
-        id: `EQ-${formData.reference}`,
+        name: watchedName,
+        reference: watchedReference,
+        id: `EQ-${watchedReference}`,
         timestamp: new Date().toISOString()
       });
 
@@ -156,12 +152,9 @@ const CreateEquipment: React.FC = () => {
       setGeneratedQrCode(qrCodeDataURL);
       
       // Convert to file and save to form
-      const qrCodeFile = await dataURLToFile(qrCodeDataURL, `QR_${formData.reference}.png`);
-      setFormData(prev => ({
-        ...prev,
-        qrCode: qrCodeFile,
-        qrCodeName: `QR_${formData.reference}.png`
-      }));
+      const qrCodeFile = await dataURLToFile(qrCodeDataURL, `QR_${watchedReference}.png`);
+      setValue('qrCode', qrCodeFile);
+      setValue('qrCodeName', `QR_${watchedReference}.png`);
       
       setQrCodePreview(qrCodeDataURL);
     } catch (error) {
@@ -180,7 +173,7 @@ const CreateEquipment: React.FC = () => {
   const downloadQRCode = () => {
     if (generatedQrCode) {
       const link = document.createElement('a');
-      link.download = formData.qrCodeName || 'qr-code.png';
+      link.download = watch('qrCodeName') || 'qr-code.png';
       link.href = generatedQrCode;
       document.body.appendChild(link);
       link.click();
@@ -188,17 +181,16 @@ const CreateEquipment: React.FC = () => {
     }
   };
 
-  // Part file upload handlers
+  // Part file upload handlers using React Hook Form
   const handlePartFileChange = (e: React.ChangeEvent<HTMLInputElement>, partIndex: number, fileType: 'image' | 'video') => {
     const file = e.target.files?.[0] || null;
     
-    // Update form data
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? { ...part, [fileType]: file } : part
-      )
-    }));
+    // Update form data using setValue
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? { ...part, [fileType]: file } : part
+    );
+    setValue('parts', updatedParts);
 
     // Create preview
     if (file) {
@@ -235,80 +227,59 @@ const CreateEquipment: React.FC = () => {
     }
   };
 
-  const handlePartChange = (partIndex: number, field: keyof Parts, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? { ...part, [field]: value } : part
-      )
-    }));
-  };
-
-  const handlePartDescriptionChange = (partIndex: number, descIndex: number, field: keyof PartDescription, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          description: part.description.map((desc, j) =>
-            j === descIndex ? { ...desc, [field]: value } : desc
-          )
-        } : part
-      )
-    }));
-  };
+  // This function is no longer needed as we're using register directly
 
   const addPartDescription = (partIndex: number) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          description: [...part.description, { key: '', value: '' }]
-        } : part
-      )
-    }));
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? {
+        ...part,
+        description: [...part.description, { key: '', value: '' }]
+      } : part
+    );
+    setValue('parts', updatedParts);
   };
 
   const removePartDescription = (partIndex: number, descIndex: number) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.map((part, i) =>
-        i === partIndex ? {
-          ...part,
-          description: part.description.filter((_, j) => j !== descIndex)
-        } : part
-      )
-    }));
+    const currentParts = getValues('parts');
+    const updatedParts = currentParts.map((part, i) =>
+      i === partIndex ? {
+        ...part,
+        description: part.description.filter((_, j) => j !== descIndex)
+      } : part
+    );
+    setValue('parts', updatedParts);
   };
 
   const addPart = () => {
-    setFormData(prev => ({
-      ...prev,
-      parts: [...prev.parts, {
-        id: `PART-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-        description: [{ key: '', value: '' }],
-        video: null,
-        image: null,
-        datasheetUrl: '',
-        buttons: [{ name: '', images: null }]
-      }]
-    }));
+    appendPart({
+      id: `PART-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+      description: [{ key: '', value: '' }],
+      video: null,
+      image: null,
+      datasheetUrl: '',
+      buttons: [{ name: '', images: null }]
+    });
   };
 
-  const removePart = (partIndex: number) => {
-    setFormData(prev => ({
-      ...prev,
-      parts: prev.parts.filter((_, i) => i !== partIndex)
-    }));
+  const handleRemovePart = (partIndex: number) => {
+    removePartFromArray(partIndex);
+    // Clear previews for removed part
+    setPartImagePreviews(prev => {
+      const newPreviews = { ...prev };
+      delete newPreviews[partIndex];
+      return newPreviews;
+    });
+    setPartVideoPreviews(prev => {
+      const newPreviews = { ...prev };
+      delete newPreviews[partIndex];
+      return newPreviews;
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
     const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      [fieldName]: file
-    }));
+    setValue(fieldName as any, file);
 
     // Create preview for QR code only
     if (file) {
@@ -328,46 +299,22 @@ const CreateEquipment: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const onSubmit = async (data: EquipmentFormData) => {
     try {
       // Create new equipment object
       const newEquipment = {
         id: `EQ-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-        ...formData,
+        ...data,
         status: 'active',
         dateCreated: new Date().toLocaleDateString('fr-FR').replace(/\//g, '/')
       };
 
-      // In a real app, you would send this to an API
       console.log('New equipment created:', newEquipment);
 
       // Show success message
       setShowSuccess(true);
 
-      // Reset form
-      setFormData({
-        name: '',
-        reference: '',
-        location: '',
-        image: null,
-        qrCode: null,
-        qrCodeName: '',
-        videoUrl: null,
-        datasheet: null,
-        description: [{ key: '', value: '' }],
-        parts: [{
-          id: '',
-          description: [{ key: '', value: '' }],
-          video: null,
-          image: null,
-          datasheetUrl: '',
-          buttons: [{ name: '', images: null }]
-        }]
-      });
-
+      
       // Clear previews
       setQrCodePreview(null);
       setGeneratedQrCode(null);
@@ -379,8 +326,6 @@ const CreateEquipment: React.FC = () => {
 
     } catch (error) {
       console.error('Error creating equipment:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -392,7 +337,6 @@ const CreateEquipment: React.FC = () => {
   return (
     <Layout>
       <div className="p-6 max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
             <Plus className="w-5 h-5 text-white" />
@@ -456,7 +400,7 @@ const CreateEquipment: React.FC = () => {
         {/* Form Container */}
         <div className="bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* General Information Section */}
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-200">
@@ -471,15 +415,15 @@ const CreateEquipment: React.FC = () => {
                       Nom d'équipement
                     </label>
                     <input
+                      {...register('name', { required: 'Le nom est requis' })}
                       type="text"
                       id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Ajouter le nom d'équipement ici..."
                     />
+                    {errors.name && (
+                      <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                    )}
                   </div>
 
                   {/* Reference */}
@@ -488,15 +432,15 @@ const CreateEquipment: React.FC = () => {
                       Référence
                     </label>
                     <input
+                      {...register('reference', { required: 'La référence est requise' })}
                       type="text"
                       id="reference"
-                      name="reference"
-                      value={formData.reference}
-                      onChange={handleInputChange}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Ajouter la référence ici..."
                     />
+                    {errors.reference && (
+                      <p className="text-red-500 text-sm mt-1">{errors.reference.message}</p>
+                    )}
                   </div>
 
                   {/* QR Code */}
@@ -554,7 +498,7 @@ const CreateEquipment: React.FC = () => {
                             />
                           </div>
                           <p className="text-xs text-gray-500 text-center mt-2">
-                            Nom du fichier: {formData.qrCodeName}
+                            Nom du fichier: {watch('qrCodeName')}
                           </p>
                         </div>
                       </div>
@@ -602,7 +546,7 @@ const CreateEquipment: React.FC = () => {
                         onClick={() => document.getElementById('datasheet')?.click()}
                         className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left text-gray-500 hover:bg-gray-50 transition-colors"
                       >
-                        {formData.datasheet ? formData.datasheet.name : "Insérer le datasheet relative"}
+                        {watch('datasheet') ? watch('datasheet')?.name : "Insérer le datasheet relative"}
                       </button>
                       <FileText className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
@@ -617,15 +561,15 @@ const CreateEquipment: React.FC = () => {
                       Localisation
                     </label>
                     <input
+                      {...register('location', { required: 'La localisation est requise' })}
                       type="text"
                       id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Ajouter la localisation ici..."
                     />
+                    {errors.location && (
+                      <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -652,14 +596,14 @@ const CreateEquipment: React.FC = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {formData.parts.map((part, partIndex) => (
+                  {partsFields.map((_, partIndex) => (
                     <div key={partIndex} className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium text-gray-900">Partie {partIndex + 1}</h4>
-                        {formData.parts.length > 1 && (
+                        {partsFields.length > 1 && (
                           <button
                             type="button"
-                            onClick={() => removePart(partIndex)}
+                            onClick={() => handleRemovePart(partIndex)}
                             className="text-red-600 hover:text-red-700 text-sm font-medium"
                           >
                             Supprimer partie
@@ -673,9 +617,8 @@ const CreateEquipment: React.FC = () => {
                             Nom de la partie
                           </label>
                           <input
+                            {...register(`parts.${partIndex}.id` as const)}
                             type="text"
-                            value={part.id}
-                            onChange={(e) => handlePartChange(partIndex, 'id', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="ex: Positionneur electropneumatique"
                           />
@@ -688,9 +631,8 @@ const CreateEquipment: React.FC = () => {
                             URL de la fiche technique
                           </label>
                           <input
+                            {...register(`parts.${partIndex}.datasheetUrl` as const)}
                             type="url"
-                            value={part.datasheetUrl}
-                            onChange={(e) => handlePartChange(partIndex, 'datasheetUrl', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="https://drive.google.com/file/d/..."
                           />
@@ -813,23 +755,21 @@ const CreateEquipment: React.FC = () => {
                           </button>
                         </div>
                         <div className="space-y-3">
-                          {part.description.map((desc, descIndex) => (
+                          {watch(`parts.${partIndex}.description`)?.map((_: any, descIndex: number) => (
                             <div key={descIndex} className="flex gap-3 items-center">
                               <input
+                                {...register(`parts.${partIndex}.description.${descIndex}.key` as const)}
                                 type="text"
-                                value={desc.key}
-                                onChange={(e) => handlePartDescriptionChange(partIndex, descIndex, 'key', e.target.value)}
                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Clé (ex: marque)"
                               />
                               <input
+                                {...register(`parts.${partIndex}.description.${descIndex}.value` as const)}
                                 type="text"
-                                value={desc.value}
-                                onChange={(e) => handlePartDescriptionChange(partIndex, descIndex, 'value', e.target.value)}
                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Valeur (ex: SAMSON)"
                               />
-                              {part.description.length > 1 && (
+                              {watch(`parts.${partIndex}.description`)?.length > 1 && (
                                 <button
                                   type="button"
                                   onClick={() => removePartDescription(partIndex, descIndex)}
@@ -839,7 +779,7 @@ const CreateEquipment: React.FC = () => {
                                 </button>
                               )}
                             </div>
-                          ))}
+                          )) || []}
                         </div>
                       </div>
 
@@ -867,7 +807,7 @@ const CreateEquipment: React.FC = () => {
                           </button>
                         </div>
                         <div className="space-y-4">
-                          {part.buttons.map((button, buttonIndex) => (
+                          {watch(`parts.${partIndex}.buttons`)?.map((_: any, buttonIndex: number) => (
                             <div key={buttonIndex} className="bg-gray-50 rounded-lg p-4">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
@@ -875,15 +815,14 @@ const CreateEquipment: React.FC = () => {
                                     Nom du bouton
                                   </label>
                                   <input
+                                    {...register(`parts.${partIndex}.buttons.${buttonIndex}.name` as const)}
                                     type="text"
-                                    value={button.name}
-                                    onChange={(e) => handlePartButtonChange(partIndex, buttonIndex, 'name', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="ex: maintenance, schéma, fonctionnement"
                                   />
                                 </div>
                                 <div className="flex items-end">
-                                  {part.buttons.length > 1 && (
+                                  {watch(`parts.${partIndex}.buttons`)?.length > 1 && (
                                     <button
                                       type="button"
                                       onClick={() => removePartButton(partIndex, buttonIndex)}
