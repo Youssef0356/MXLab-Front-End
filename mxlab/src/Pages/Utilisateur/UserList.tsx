@@ -3,16 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../Components/Common/Layout";
 import { User, Mail, Phone, MapPin, Shield, Search, Plus } from 'lucide-react';
 import usersData from '../../api/json-simulations/users.json';
-
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  privilege: string;
-  location: string;
-  dateCreation: string;
-}
+import type { UserData } from '../../services/interfaces';
 
 const UserList: React.FC = () => {
   const navigate = useNavigate();

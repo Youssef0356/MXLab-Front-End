@@ -3,16 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from "../../Components/Common/Layout";
 import { MapPin, Plus, Search, Building, Calendar, User } from 'lucide-react';
 import sitesData from '../../api/json-simulations/Sites.json';
-
-interface SiteData {
-  id: string;
-  name: string;
-  location: string;
-  address: string;
-  manager: string;
-  status: 'bon etat' | 'en panne' | 'en cours de maintenance';
-  dateCreated: string;
-}
+import type { SiteData } from '../../services/interfaces';
 
 const SiteList: React.FC = () => {
   const navigate = useNavigate();

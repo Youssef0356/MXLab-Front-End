@@ -2,19 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import logo from '../../assets/logo.png'
-
-// Temporary demo credentials
-const TEST_CREDENTIALS = {
-  email: 'admin@cmms.fr',
-  password: 'admin123',
-};
-
-// Define form data type
-type LoginFormData = {
-  email: string;
-  password: string;
-};
+import logo from '../../assets/logo.png';
+import type { LoginFormData } from '../../services/types';
+import { TEST_CREDENTIALS } from '../../services/constants';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();

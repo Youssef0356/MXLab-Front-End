@@ -2,22 +2,13 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Layout from '../../Components/Common/Layout';
 import { ChevronDown } from 'lucide-react';
-// Types for form data
-type InterventionFormData = {
-  title: string;
-  type: string;
-  description: string;
-  priority: string;
-  technician: string;
-  equipment: string;
-  location: string;
-};
+import type { InterventionFormData } from '../../services/interfaces';
 
 const InterventionCreate: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors } 
   } = useForm<InterventionFormData>();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,13 +50,13 @@ const InterventionCreate: React.FC = () => {
       console.log('Intervention créée:', data);
       alert('Ordre d\'intervention créé avec succès!');
     } catch (error) {
-      console.error('Erreur:', error);
-      alert('Erreur lors de la création');
+      console.error('Erreur lors de la création de l\'intervention:', error);
+      alert('Erreur lors de la création de l\'intervention');
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  
   const handleCancel = () => {
     if (confirm('Êtes-vous sûr de vouloir annuler? Les données non sauvegardées seront perdues.')) {
       // Navigate back or reset form
@@ -232,11 +223,12 @@ const InterventionCreate: React.FC = () => {
                 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Nom du technicien
+                    <label htmlFor="assignedTo">Technicien</label>
                   </label>
                   <div className="relative">
                     <select
-                      {...register('technician', { required: 'Le technicien est requis' })}
+                      id="assignedTo"
+                      {...register('assignedTo', { required: 'Technicien requis' })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Fahmi</option>
@@ -246,8 +238,8 @@ const InterventionCreate: React.FC = () => {
                     </select>
                     <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
-                  {errors.technician && (
-                    <p className="text-red-500 text-sm mt-1">{errors.technician.message}</p>
+                  {errors.assignedTo && (
+                    <p className="text-red-600 text-sm mt-1">{errors.assignedTo.message}</p>
                   )}
                 </div>
 

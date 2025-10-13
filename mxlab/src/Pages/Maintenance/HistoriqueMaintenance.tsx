@@ -1,18 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import Layout from "../../Components/Common/Layout";
 import { Search, Filter, Calendar, User, Wrench, MapPin, GripVertical } from 'lucide-react';
-
-interface MaintenanceRecord {
-  id: string;
-  description: string;
-  equipement: string;
-  site: string;
-  dateDebut: string;
-  dateFin: string;
-  technicien: string;
-  status: 'completed' | 'in_progress' | 'planned';
-  type: 'preventive' | 'corrective' | 'emergency';
-}
+import type { MaintenanceRecord } from '../../services/interfaces';
 
 const HistoriqueMaintenance: React.FC = () => {
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
@@ -31,7 +20,7 @@ const HistoriqueMaintenance: React.FC = () => {
     dateFin: 120,
     technicien: 120,
     type: 120,
-    status: 120
+    statut: 120
   });
   
   const [isResizing, setIsResizing] = useState<string | null>(null);
@@ -59,7 +48,7 @@ const HistoriqueMaintenance: React.FC = () => {
             dateDebut: '2023/10/02',
             dateFin: '2023/11/02',
             technicien: 'ALI',
-            status: 'completed',
+            statut: 'completed',
             type: 'corrective'
           },
           {
@@ -70,18 +59,18 @@ const HistoriqueMaintenance: React.FC = () => {
             dateDebut: '2023/09/15',
             dateFin: '2023/09/16',
             technicien: 'BACHIR',
-            status: 'completed',
+            statut: 'completed',
             type: 'preventive'
           },
           {
             id: 'OI-003',
-            description: 'Capteur de position défectueux',
+            description: 'Maintenance du capteur de position',
             equipement: 'Capteur de position',
             site: 'C',
             dateDebut: '2024/12/08',
             dateFin: '2025/01/01',
             technicien: 'FAHMI',
-            status: 'in_progress',
+            statut: 'completed',
             type: 'corrective'
           }
         ];
@@ -109,7 +98,7 @@ const HistoriqueMaintenance: React.FC = () => {
 
     // Status filter
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(record => record.status === filterStatus);
+      filtered = filtered.filter(record => record.statut === filterStatus);
     }
 
     // Type filter
@@ -157,13 +146,13 @@ const HistoriqueMaintenance: React.FC = () => {
     }
   }, [isResizing, startX, startWidth]);
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (statut: string) => {
     const statusConfig = {
       completed: { color: 'bg-green-100 text-green-800', text: 'Terminé' },
       in_progress: { color: 'bg-blue-100 text-blue-800', text: 'En cours' },
       planned: { color: 'bg-yellow-100 text-yellow-800', text: 'Planifié' }
     };
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.planned;
+    const config = statusConfig[statut as keyof typeof statusConfig] || statusConfig.planned;
     
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
@@ -355,7 +344,7 @@ const HistoriqueMaintenance: React.FC = () => {
                     </th>
                     <th 
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      style={{ width: `${columnWidths.status}px` }}
+                      style={{ width: `${columnWidths.statut}px` }}
                     >
                       Statut
                     </th>
@@ -445,10 +434,10 @@ const HistoriqueMaintenance: React.FC = () => {
                       </td>
                       <td 
                         className="px-6 py-4 overflow-hidden"
-                        style={{ width: `${columnWidths.status}px` }}
+                        style={{ width: `${columnWidths.statut}px` }}
                       >
                         <div className="truncate">
-                          {getStatusBadge(record.status)}
+                          {getStatusBadge(record.statut)}
                         </div>
                       </td>
                     </tr>
@@ -480,7 +469,7 @@ const HistoriqueMaintenance: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Terminées</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {filteredRecords.filter(r => r.status === 'completed').length}
+                    {filteredRecords.filter(r => r.statut === 'completed').length}
                   </p>
                 </div>
               </div>
@@ -494,7 +483,7 @@ const HistoriqueMaintenance: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">En cours</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {filteredRecords.filter(r => r.status === 'in_progress').length}
+                    {filteredRecords.filter(r => r.statut === 'in_progress').length}
                   </p>
                 </div>
               </div>
@@ -508,7 +497,7 @@ const HistoriqueMaintenance: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Planifiées</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {filteredRecords.filter(r => r.status === 'planned').length}
+                    {filteredRecords.filter(r => r.statut === 'planned').length}
                   </p>
                 </div>
               </div>

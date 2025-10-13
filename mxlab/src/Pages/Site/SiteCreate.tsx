@@ -3,14 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Layout from "../../Components/Common/Layout";
 import { Building, MapPin, Users, Save, X, ArrowLeft, Calendar } from 'lucide-react';
-
-interface SiteFormData {
-  name: string;
-  location: string;
-  address: string;
-  manager: string;
-  status: 'bon etat' | 'en panne' | 'en cours de maintenance';
-}
+import type { SiteFormData } from '../../services/interfaces';
 
 const SiteCreate: React.FC = () => {
   const navigate = useNavigate();

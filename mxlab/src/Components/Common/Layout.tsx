@@ -1,11 +1,8 @@
 import React from 'react';
-import type {ReactNode} from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import type { LayoutProps } from '../../services/types';
 
-type LayoutProps = {
-    children:ReactNode;
-}
 const Layout:React.FC <LayoutProps> = ({children}) =>{
   return (
     <div className="flex h-screen bg-gray-50">

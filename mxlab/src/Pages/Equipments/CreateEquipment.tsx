@@ -4,37 +4,7 @@ import Layout from "../../Components/Common/Layout";
 import { Plus, Upload, QrCode, Video, FileText, Save, Info, Download } from 'lucide-react';
 import QRCode from 'qrcode';
 import { useForm, useFieldArray } from 'react-hook-form';
-interface Button {
-  name: string;
-  images: File | null;
-}
-
-interface PartDescription {
-  key: string;
-  value: string;
-}
-
-interface Parts {
-  id: string;
-  description: PartDescription[];
-  video: File | null;
-  image: File | null;
-  datasheetUrl: string;
-  buttons: Button[];
-}
-
-interface EquipmentFormData {
-  name: string;
-  reference: string;
-  location: string;
-  image: File | null;
-  qrCode: File | null;
-  qrCodeName: string;
-  videoUrl: File | null;
-  datasheet: File | null;
-  description: PartDescription[];
-  parts: Parts[];
-}
+import type { EquipmentFormData } from '../../services/interfaces';
 
 const CreateEquipment: React.FC = () => {
   const navigate = useNavigate();

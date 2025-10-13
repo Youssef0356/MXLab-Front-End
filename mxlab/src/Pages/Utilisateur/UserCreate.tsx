@@ -4,15 +4,7 @@ import { useForm } from 'react-hook-form';
 import Layout from "../../Components/Common/Layout";
 import { User, Mail, Phone, MapPin, Shield, Calendar, Save, X, ArrowLeft } from 'lucide-react';
 import usersData from '../../api/json-simulations/users.json';
-
-interface UserFormData {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  privilege: string;
-  location: string;
-}
+import type { UserFormData } from '../../services/interfaces';
 
 const UserCreate: React.FC = () => {
   const { id } = useParams<{ id: string }>();
